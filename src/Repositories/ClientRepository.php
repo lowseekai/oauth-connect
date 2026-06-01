@@ -9,6 +9,7 @@ use ISeekUp\OAuthConnect\Models\AuthorizationCode;
 use ISeekUp\OAuthConnect\Models\Client;
 use ISeekUp\OAuthConnect\Models\ClientAuthorization;
 use ISeekUp\OAuthConnect\Models\RefreshToken;
+use ISeekUp\OAuthConnect\Support\AccessPolicy;
 use ISeekUp\OAuthConnect\Support\RandomGenerator;
 use ISeekUp\OAuthConnect\Support\ScopeRegistry;
 use ISeekUp\OAuthConnect\Support\Translation;
@@ -17,15 +18,18 @@ class ClientRepository
 {
     private $random;
     private $scopes;
+    private $accessPolicy;
     private $translation;
 
     public function __construct(
         RandomGenerator $random,
         ScopeRegistry $scopes,
+        AccessPolicy $accessPolicy,
         Translation $translation
     ) {
         $this->random = $random;
         $this->scopes = $scopes;
+        $this->accessPolicy = $accessPolicy;
         $this->translation = $translation;
     }
 
@@ -97,6 +101,7 @@ class ClientRepository
             'icon_url' => $client->icon_url,
             'redirect_uris' => $client->redirectUris(),
             'scopes' => $client->scopeList(),
+            'access_policy' => $this->accessPolicy->normalize($client->accessPolicy()),
             'grant_types' => $client->grantTypeList(),
             'is_enabled' => (bool) $client->is_enabled,
             'created_at' => $this->date($client->created_at),
@@ -124,6 +129,7 @@ class ClientRepository
         $client->icon_url = $this->nullableUrl($data['icon_url'] ?? null, true);
         $client->redirect_uris = json_encode($this->redirectUris($data['redirect_uris'] ?? $data['redirect_uri'] ?? []));
         $client->scopes = $this->scopes->toString($this->scopes->normalize($data['scopes'] ?? $this->scopes->defaults()));
+        $client->access_policy = json_encode($this->accessPolicy->normalize($data['access_policy'] ?? $client->accessPolicy()));
         $client->grant_types = 'authorization_code refresh_token';
         $client->is_enabled = array_key_exists('is_enabled', $data) ? (bool) $data['is_enabled'] : ($creating || (bool) $client->is_enabled);
     }

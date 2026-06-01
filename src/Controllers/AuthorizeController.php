@@ -60,6 +60,16 @@ class AuthorizeController implements RequestHandlerInterface
             ]));
         }
 
+        $policyFailure = $this->flow->accessPolicyFailure($client, $actor);
+
+        if ($policyFailure !== null) {
+            return new RedirectResponse($this->withQuery($redirectUri, [
+                'error' => 'access_denied',
+                'error_description' => $policyFailure,
+                'state' => $state,
+            ]));
+        }
+
         $code = $this->flow->createAuthorizationCode($client, (int) $actor->id, $redirectUri, $scopes);
 
         return new RedirectResponse($this->withQuery($redirectUri, [

@@ -85,6 +85,17 @@ iseekup-oauth-connect:
       redirect_uris: 回调地址
       redirect_uris_help: 每行填写一个完整且精确匹配的回调地址，不允许包含 URL 片段。
       allowed_scopes: 允许的授权范围
+      access_policy_title: 准入策略
+      access_policy_enabled: 启用准入策略
+      access_policy_help: 启用后，用户必须满足这些规则，该客户端才能获得授权码或继续使用已有令牌。
+      policy_require_email_confirmed: 要求邮箱已验证
+      policy_block_suspended: 拦截被封禁用户
+      policy_min_discussion_count: 最少主题数
+      policy_min_comment_count: 最少回复数
+      policy_min_account_age_days: 最少注册天数
+      policy_last_seen_within_days: 最近活跃天数内
+      policy_min_trust_level: 最低信任等级
+      policy_blank_placeholder: 留空则不限制
       create_client: 创建客户端
       save_client: 保存客户端
       saving: 保存中...
@@ -110,10 +121,13 @@ iseekup-oauth-connect:
       user_stats: 活跃数据
       user_moderation: 管理状态
       user_trust: 信任等级
+    access_policy:
+      enabled_badge: 已启用准入策略
   forum:
     page_title:
       login_required: 需要登录
       invalid_request: OAuth 请求无效
+      access_denied: 无法授权
       authorize: 授权 {client}
     login:
       title: 需要登录
@@ -136,6 +150,16 @@ iseekup-oauth-connect:
       redirect_uri_required: 缺少 redirect_uri。
       redirect_uri_not_registered: redirect_uri 未在该客户端中登记。
       state_required: 缺少 state。
+      access_denied: 无法授权
+  access_policy:
+    failures:
+      email_confirmed: 你的邮箱地址必须先完成验证。
+      suspended: 你的账号当前已被封禁。
+      min_discussion_count: 你的主题数至少需要达到 {count}。
+      min_comment_count: 你的回复数至少需要达到 {count}。
+      min_account_age_days: 你的账号注册时间至少需要满 {days} 天。
+      last_seen_within_days: 你需要在最近 {days} 天内活跃过。
+      min_trust_level: 你的信任等级至少需要达到 {level}。
   errors:
     unknown_scope: "未知授权范围：{scope}"
     scope_not_allowed: "该客户端不允许请求此授权范围：{scope}"

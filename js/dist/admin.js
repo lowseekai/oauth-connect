@@ -195,6 +195,48 @@
     return isNaN(value) || value < 1 ? fallback : value;
   }
 
+  function freshAccessPolicy() {
+    return {
+      enabled: false,
+      require_email_confirmed: false,
+      block_suspended: true,
+      min_discussion_count: '',
+      min_comment_count: '',
+      min_account_age_days: '',
+      last_seen_within_days: '',
+      min_trust_level: '',
+    };
+  }
+
+  function accessPolicyToForm(policy) {
+    var form = freshAccessPolicy();
+    var source = policy || {};
+
+    form.enabled = !!source.enabled;
+    form.require_email_confirmed = !!source.require_email_confirmed;
+    form.block_suspended = source.block_suspended !== false;
+
+    [
+      'min_discussion_count',
+      'min_comment_count',
+      'min_account_age_days',
+      'last_seen_within_days',
+      'min_trust_level',
+    ].forEach(function (key) {
+      form[key] = source[key] === null || source[key] === undefined ? '' : String(source[key]);
+    });
+
+    return form;
+  }
+
+  function nullableInteger(value) {
+    if (value === undefined || value === null || String(value).trim() === '') return null;
+
+    var parsed = parseInt(value, 10);
+
+    return isNaN(parsed) || parsed < 0 ? null : parsed;
+  }
+
   function freshForm() {
     return {
       name: '',
@@ -209,6 +251,7 @@
         'user.moderation': false,
         'user.trust': false,
       },
+      access_policy: freshAccessPolicy(),
       is_enabled: true,
     };
   }
@@ -221,6 +264,7 @@
     form.homepage_url = client.homepage_url || '';
     form.icon_url = client.icon_url || '';
     form.redirect_uris = (client.redirect_uris || []).join('\n');
+    form.access_policy = accessPolicyToForm(client.access_policy);
     form.is_enabled = !!client.is_enabled;
 
     SCOPE_OPTIONS.forEach(function (scope) {
@@ -252,6 +296,16 @@
         return uri.trim();
       }).filter(Boolean),
       scopes: selectedScopes,
+      access_policy: {
+        enabled: !!form.access_policy.enabled,
+        require_email_confirmed: !!form.access_policy.require_email_confirmed,
+        block_suspended: !!form.access_policy.block_suspended,
+        min_discussion_count: nullableInteger(form.access_policy.min_discussion_count),
+        min_comment_count: nullableInteger(form.access_policy.min_comment_count),
+        min_account_age_days: nullableInteger(form.access_policy.min_account_age_days),
+        last_seen_within_days: nullableInteger(form.access_policy.last_seen_within_days),
+        min_trust_level: nullableInteger(form.access_policy.min_trust_level),
+      },
       is_enabled: !!form.is_enabled,
     };
   }
@@ -281,6 +335,66 @@
     return (scopes || []).map(function (scope) {
       return m('code.OAuthConnectScope', scope);
     });
+  }
+
+  function accessPolicyForm(form) {
+    var policy = form.access_policy || freshAccessPolicy();
+
+    form.access_policy = policy;
+
+    return m('.OAuthConnectAccessPolicy', [
+      m('.OAuthConnectAccessPolicyHeader', [
+        m('label.checkbox', [
+          m('input', {
+            type: 'checkbox',
+            checked: !!policy.enabled,
+            onchange: function (event) {
+              policy.enabled = event.currentTarget.checked;
+            },
+          }),
+          m('span', t('form.access_policy_enabled', {}, 'Enable access policy')),
+        ]),
+        m('p.helpText', t('form.access_policy_help', {}, 'When enabled, users must meet these rules before this client can receive an authorization code or use existing tokens.')),
+      ]),
+      policy.enabled ? m('.OAuthConnectPolicyGrid', [
+        policyCheckbox(policy, 'require_email_confirmed', t('form.policy_require_email_confirmed', {}, 'Require confirmed email')),
+        policyCheckbox(policy, 'block_suspended', t('form.policy_block_suspended', {}, 'Block suspended users')),
+        policyNumberInput(policy, 'min_discussion_count', t('form.policy_min_discussion_count', {}, 'Minimum discussions')),
+        policyNumberInput(policy, 'min_comment_count', t('form.policy_min_comment_count', {}, 'Minimum comments')),
+        policyNumberInput(policy, 'min_account_age_days', t('form.policy_min_account_age_days', {}, 'Minimum account age days')),
+        policyNumberInput(policy, 'last_seen_within_days', t('form.policy_last_seen_within_days', {}, 'Active within days')),
+        policyNumberInput(policy, 'min_trust_level', t('form.policy_min_trust_level', {}, 'Minimum trust level')),
+      ]) : null,
+    ]);
+  }
+
+  function policyCheckbox(policy, key, label) {
+    return m('label.checkbox.OAuthConnectPolicyCheckbox', [
+      m('input', {
+        type: 'checkbox',
+        checked: !!policy[key],
+        onchange: function (event) {
+          policy[key] = event.currentTarget.checked;
+        },
+      }),
+      m('span', label),
+    ]);
+  }
+
+  function policyNumberInput(policy, key, label) {
+    return m('label', [
+      m('span', label),
+      m('input.FormControl', {
+        type: 'number',
+        min: 0,
+        step: 1,
+        value: policy[key],
+        placeholder: t('form.policy_blank_placeholder', {}, 'Leave blank to ignore'),
+        oninput: function (event) {
+          policy[key] = event.currentTarget.value;
+        },
+      }),
+    ]);
   }
 
   function authorizationUser(authorization) {
@@ -539,6 +653,7 @@
         m('strong', client.name),
         m('code.OAuthConnectClientId', client.client_id),
         client.description ? m('div.helpText', client.description) : null,
+        client.access_policy && client.access_policy.enabled ? m('div.OAuthConnectPolicyStatus.OAuthConnectPolicyStatus--enabled', t('access_policy.enabled_badge', {}, 'Access policy enabled')) : null,
       ]),
       m('td', (client.redirect_uris || []).map(function (uri) {
         return m('div.OAuthConnectUri', uri);
@@ -632,6 +747,8 @@
           ]);
         }),
       ]),
+      m('h4.OAuthConnectSubheading', t('form.access_policy_title', {}, 'Access policy')),
+      accessPolicyForm(form),
       m('.OAuthConnectFormActions', [
         m('button.Button.Button--primary', {
           type: 'submit',

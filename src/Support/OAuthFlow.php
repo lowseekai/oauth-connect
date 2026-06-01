@@ -4,6 +4,7 @@ namespace ISeekUp\OAuthConnect\Support;
 
 use Carbon\Carbon;
 use Flarum\Settings\SettingsRepositoryInterface;
+use Flarum\User\User;
 use InvalidArgumentException;
 use ISeekUp\OAuthConnect\Models\AuthorizationCode;
 use ISeekUp\OAuthConnect\Models\Client;
@@ -15,6 +16,7 @@ class OAuthFlow
     private $clients;
     private $random;
     private $scopes;
+    private $accessPolicy;
     private $settings;
     private $translation;
 
@@ -22,12 +24,14 @@ class OAuthFlow
         ClientRepository $clients,
         RandomGenerator $random,
         ScopeRegistry $scopes,
+        AccessPolicy $accessPolicy,
         SettingsRepositoryInterface $settings,
         Translation $translation
     ) {
         $this->clients = $clients;
         $this->random = $random;
         $this->scopes = $scopes;
+        $this->accessPolicy = $accessPolicy;
         $this->settings = $settings;
         $this->translation = $translation;
     }
@@ -66,6 +70,11 @@ class OAuthFlow
         $scope = $this->scopes->normalize($query['scope'] ?? '', $client);
 
         return [$client, $redirectUri, $scope, $state];
+    }
+
+    public function accessPolicyFailure(Client $client, User $user): ?string
+    {
+        return $this->accessPolicy->failureMessage($client, $user);
     }
 
     public function safeRedirectUri(array $query): ?string

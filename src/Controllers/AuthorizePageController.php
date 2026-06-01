@@ -59,6 +59,14 @@ class AuthorizePageController implements RequestHandlerInterface
 
         $session = $request->getAttribute('session');
         $csrfToken = $session ? $session->token() : '';
+        $policyFailure = $this->flow->accessPolicyFailure($client, $actor);
+
+        if ($policyFailure !== null) {
+            return new HtmlResponse($this->page(
+                $this->trans('forum.page_title.access_denied', [], 'Access denied'),
+                $this->errorMarkup($policyFailure, $this->trans('forum.error.access_denied', [], 'Access denied'))
+            ), 403);
+        }
 
         return new HtmlResponse($this->page($this->trans('forum.page_title.authorize', [
             'client' => $client->name,
@@ -177,10 +185,10 @@ HTML;
 HTML;
     }
 
-    private function errorMarkup(string $message): string
+    private function errorMarkup(string $message, ?string $title = null): string
     {
         $message = $this->escape($message);
-        $title = $this->escape($this->trans('forum.error.invalid_request', [], 'Invalid OAuth request'));
+        $title = $this->escape($title ?? $this->trans('forum.error.invalid_request', [], 'Invalid OAuth request'));
 
         return <<<HTML
 <main class="oc-page">

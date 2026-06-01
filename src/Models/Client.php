@@ -36,6 +36,13 @@ class Client extends AbstractModel
         return $this->splitList($this->grant_types);
     }
 
+    public function accessPolicy(): array
+    {
+        $decoded = json_decode((string) $this->access_policy, true);
+
+        return is_array($decoded) ? $decoded : [];
+    }
+
     public function allowsRedirectUri(string $redirectUri): bool
     {
         return in_array($redirectUri, $this->redirectUris(), true);

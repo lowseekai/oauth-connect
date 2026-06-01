@@ -85,6 +85,17 @@ iseekup-oauth-connect:
       redirect_uris: Redirect URIs
       redirect_uris_help: One exact redirect URI per line. Fragments are not allowed.
       allowed_scopes: Allowed scopes
+      access_policy_title: Access policy
+      access_policy_enabled: Enable access policy
+      access_policy_help: When enabled, users must meet these rules before this client can receive an authorization code or use existing tokens.
+      policy_require_email_confirmed: Require confirmed email
+      policy_block_suspended: Block suspended users
+      policy_min_discussion_count: Minimum discussions
+      policy_min_comment_count: Minimum comments
+      policy_min_account_age_days: Minimum account age days
+      policy_last_seen_within_days: Active within days
+      policy_min_trust_level: Minimum trust level
+      policy_blank_placeholder: Leave blank to ignore
       create_client: Create client
       save_client: Save client
       saving: Saving...
@@ -110,10 +121,13 @@ iseekup-oauth-connect:
       user_stats: Activity counters
       user_moderation: Moderation status
       user_trust: Trust level
+    access_policy:
+      enabled_badge: Access policy enabled
   forum:
     page_title:
       login_required: Login required
       invalid_request: Invalid OAuth request
+      access_denied: Access denied
       authorize: Authorize {client}
     login:
       title: Login required
@@ -136,6 +150,16 @@ iseekup-oauth-connect:
       redirect_uri_required: redirect_uri is required.
       redirect_uri_not_registered: redirect_uri is not registered for this client.
       state_required: state is required.
+      access_denied: Access denied
+  access_policy:
+    failures:
+      email_confirmed: Your email address must be confirmed.
+      suspended: Your account is suspended.
+      min_discussion_count: You must have at least {count} discussions.
+      min_comment_count: You must have at least {count} comments.
+      min_account_age_days: Your account must be at least {days} days old.
+      last_seen_within_days: You must have been active within the last {days} days.
+      min_trust_level: Your trust level must be at least {level}.
   errors:
     unknown_scope: "Unknown scope: {scope}"
     scope_not_allowed: "Scope is not allowed for this client: {scope}"

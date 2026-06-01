@@ -45,7 +45,8 @@
 
   .OAuthConnectEndpoints span,
   .OAuthConnectForm label > span,
-  .OAuthConnectScopes > span {
+  .OAuthConnectScopes > span,
+  .OAuthConnectAccessPolicyHeader > span {
     display: block;
     margin-bottom: 6px;
     font-weight: 600;
@@ -127,6 +128,52 @@
     font-weight: 400;
   }
 
+  .OAuthConnectSubheading {
+    margin: 18px 0 8px;
+    font-size: 14px;
+  }
+
+  .OAuthConnectAccessPolicy {
+    margin-top: 8px;
+    padding: 12px;
+    border: 1px solid var(--control-bg);
+    border-radius: 6px;
+    background: var(--body-bg);
+  }
+
+  .OAuthConnectAccessPolicyHeader .checkbox,
+  .OAuthConnectPolicyCheckbox {
+    display: inline-flex;
+    gap: 6px;
+    align-items: center;
+    margin: 0 16px 8px 0;
+    font-weight: 400;
+  }
+
+  .OAuthConnectAccessPolicyHeader .checkbox > span,
+  .OAuthConnectPolicyCheckbox > span {
+    display: inline;
+    margin: 0;
+    font-weight: 400;
+  }
+
+  .OAuthConnectPolicyGrid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    margin-top: 10px;
+  }
+
+  .OAuthConnectPolicyStatus {
+    margin-top: 6px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  .OAuthConnectPolicyStatus--enabled {
+    color: #16723c;
+  }
+
   .OAuthConnectFormActions,
   .OAuthConnectActions {
     display: flex;
@@ -189,6 +236,7 @@
     .OAuthConnectEndpoints,
     .OAuthConnectFormGrid,
     .OAuthConnectFilters,
+    .OAuthConnectPolicyGrid,
     .OAuthConnectSecret {
       grid-template-columns: 1fr;
     }

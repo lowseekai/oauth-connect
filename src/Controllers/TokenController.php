@@ -4,9 +4,11 @@ namespace ISeekUp\OAuthConnect\Controllers;
 
 use Carbon\Carbon;
 use ISeekUp\OAuthConnect\Models\AuthorizationCode;
+use ISeekUp\OAuthConnect\Models\Client;
 use ISeekUp\OAuthConnect\Models\RefreshToken;
 use ISeekUp\OAuthConnect\Repositories\ClientRepository;
 use ISeekUp\OAuthConnect\Repositories\TokenRepository;
+use ISeekUp\OAuthConnect\Support\AccessPolicy;
 use ISeekUp\OAuthConnect\Support\OAuthErrorResponse;
 use ISeekUp\OAuthConnect\Support\RequestData;
 use Laminas\Diactoros\Response\JsonResponse;
@@ -20,17 +22,20 @@ class TokenController implements RequestHandlerInterface
     private $tokens;
     private $data;
     private $errors;
+    private $accessPolicy;
 
     public function __construct(
         ClientRepository $clients,
         TokenRepository $tokens,
         RequestData $data,
-        OAuthErrorResponse $errors
+        OAuthErrorResponse $errors,
+        AccessPolicy $accessPolicy
     ) {
         $this->clients = $clients;
         $this->tokens = $tokens;
         $this->data = $data;
         $this->errors = $errors;
+        $this->accessPolicy = $accessPolicy;
     }
 
     public function handle(ServerRequestInterface $request): ResponseInterface
@@ -52,17 +57,17 @@ class TokenController implements RequestHandlerInterface
         }
 
         if ($grantType === 'authorization_code') {
-            return $this->authorizationCodeGrant($client->client_id, $body);
+            return $this->authorizationCodeGrant($client, $body);
         }
 
         if ($grantType === 'refresh_token') {
-            return $this->refreshTokenGrant($client->client_id, $body);
+            return $this->refreshTokenGrant($client, $body);
         }
 
         return $this->errors->make('unsupported_grant_type', 'Only authorization_code and refresh_token are supported.');
     }
 
-    private function authorizationCodeGrant(string $clientId, array $body): ResponseInterface
+    private function authorizationCodeGrant(Client $client, array $body): ResponseInterface
     {
         $codeValue = (string) ($body['code'] ?? '');
         $redirectUri = (string) ($body['redirect_uri'] ?? '');
@@ -77,15 +82,25 @@ class TokenController implements RequestHandlerInterface
             return $this->errors->make('invalid_grant', 'Authorization code is invalid, expired, or already used.');
         }
 
-        if ($code->client_id !== $clientId || $code->redirect_uri !== $redirectUri) {
+        if ($code->client_id !== $client->client_id || $code->redirect_uri !== $redirectUri) {
             return $this->errors->make('invalid_grant', 'Authorization code does not match this client or redirect_uri.');
+        }
+
+        if (! $code->user) {
+            return $this->errors->make('invalid_grant', 'Authorization code user no longer exists.');
+        }
+
+        $policyFailure = $this->accessPolicy->failureMessage($client, $code->user);
+
+        if ($policyFailure !== null) {
+            return $this->errors->make('access_denied', $policyFailure, 403);
         }
 
         $code->used_at = Carbon::now();
         $code->save();
 
         [$accessToken, $refreshToken] = $this->tokens->issuePair(
-            $clientId,
+            $client->client_id,
             (int) $code->user_id,
             $this->splitScope($code->scope)
         );
@@ -93,7 +108,7 @@ class TokenController implements RequestHandlerInterface
         return $this->tokenResponse($accessToken->token, $refreshToken->token, $accessToken->scope, $this->tokens->accessLifetime());
     }
 
-    private function refreshTokenGrant(string $clientId, array $body): ResponseInterface
+    private function refreshTokenGrant(Client $client, array $body): ResponseInterface
     {
         $tokenValue = (string) ($body['refresh_token'] ?? '');
 
@@ -103,15 +118,25 @@ class TokenController implements RequestHandlerInterface
 
         $oldRefreshToken = RefreshToken::findValid($tokenValue);
 
-        if (! $oldRefreshToken || $oldRefreshToken->client_id !== $clientId) {
+        if (! $oldRefreshToken || $oldRefreshToken->client_id !== $client->client_id) {
             return $this->errors->make('invalid_grant', 'Refresh token is invalid, expired, revoked, or belongs to another client.');
+        }
+
+        if (! $oldRefreshToken->user) {
+            return $this->errors->make('invalid_grant', 'Refresh token user no longer exists.');
+        }
+
+        $policyFailure = $this->accessPolicy->failureMessage($client, $oldRefreshToken->user);
+
+        if ($policyFailure !== null) {
+            return $this->errors->make('access_denied', $policyFailure, 403);
         }
 
         $oldRefreshToken->revoked_at = Carbon::now();
         $oldRefreshToken->save();
 
         [$accessToken, $refreshToken] = $this->tokens->issuePair(
-            $clientId,
+            $client->client_id,
             (int) $oldRefreshToken->user_id,
             $oldRefreshToken->scopeList()
         );

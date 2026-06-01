@@ -41,12 +41,28 @@ Use the API base URL for UserInfo endpoints:
 
 `user.read` is always included.
 
+## Access policy
+
+Each OAuth2 client can optionally enable an access policy in the admin panel. This policy is evaluated by the forum before a client receives an authorization code and again when tokens are exchanged, refreshed, or used against the UserInfo endpoint.
+
+Available rules include:
+
+- require confirmed email
+- block suspended users
+- minimum discussion count
+- minimum comment count
+- minimum account age in days
+- require recent activity within a configured number of days
+- minimum trust level when the local forum exposes that user attribute
+
+Scopes control which user fields a client may read. Access policies control whether a forum user is allowed to authorize or continue using that client.
+
 ## Admin
 
 After enabling the extension, open the Flarum admin panel and go to the OAuth Connect extension page. From there an administrator can:
 
 - create OAuth2 clients
-- edit redirect URIs, allowed scopes, and enabled status
+- edit redirect URIs, allowed scopes, access policies, and enabled status
 - reset client secrets
 - revoke client authorizations
 - delete clients
