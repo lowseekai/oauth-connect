@@ -119,7 +119,6 @@ iseekup-oauth-connect:
       title: Login required
       message: Sign in to this forum first, then open the authorization request again.
       open_forum: Open forum
-      return_url: "Return URL: {url}"
     authorize:
       signed_in_as: Signed in as {user}. This application is requesting access to your account.
       subtitle: Requesting access to your {forum} account

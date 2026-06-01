@@ -44,7 +44,7 @@ class AuthorizePageController implements RequestHandlerInterface
         if ($actor->isGuest()) {
             return new HtmlResponse($this->page(
                 $this->trans('forum.page_title.login_required', [], 'Login required'),
-                $this->loginMarkup($request)
+                $this->loginMarkup()
             ), 401);
         }
 
@@ -158,16 +158,12 @@ class AuthorizePageController implements RequestHandlerInterface
 HTML;
     }
 
-    private function loginMarkup(ServerRequestInterface $request): string
+    private function loginMarkup(): string
     {
-        $currentUrl = (string) $request->getUri();
         $base = $this->escape($this->baseUrl());
         $title = $this->escape($this->trans('forum.login.title', [], 'Login required'));
         $message = $this->escape($this->trans('forum.login.message', [], 'Sign in to this forum first, then open the authorization request again.'));
         $openForum = $this->escape($this->trans('forum.login.open_forum', [], 'Open forum'));
-        $returnUrl = $this->escape($this->trans('forum.login.return_url', [
-            'url' => $currentUrl,
-        ], 'Return URL: '.$currentUrl));
 
         return <<<HTML
 <main class="oc-page">
@@ -176,7 +172,6 @@ HTML;
     <h1 class="oc-title">{$title}</h1>
     <p class="oc-subtitle">{$message}</p>
     <a class="oc-button oc-primary" href="{$base}">{$openForum}</a>
-    <p class="oc-footnote">{$returnUrl}</p>
   </section>
 </main>
 HTML;
@@ -246,7 +241,6 @@ a:hover{text-decoration:underline}
 .oc-primary{border:1px solid #111;background:#111;color:#fff}
 .oc-secondary{border:1px solid #d4d4d0;background:rgba(255,255,255,.55);color:#333}
 .oc-error{margin:8px 0 0;color:#b42318;text-align:center}
-.oc-footnote{margin:16px 0 0;color:#8a8a8a;font-size:12px;word-break:break-all}
 @media (max-width:560px){.oc-page{padding:32px 14px}.oc-title{font-size:26px}.oc-info-row{grid-template-columns:1fr;gap:2px}.oc-account-card,.oc-info-card{padding:16px}.oc-hero-icon{width:78px;height:78px}}
 </style>
 HTML;

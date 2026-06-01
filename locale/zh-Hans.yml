@@ -119,7 +119,6 @@ iseekup-oauth-connect:
       title: 需要登录
       message: 请先登录该论坛，然后重新打开授权请求。
       open_forum: 打开论坛
-      return_url: "返回地址：{url}"
     authorize:
       signed_in_as: 当前登录用户为 {user}。该应用正在请求访问你的账号。
       subtitle: 请求访问你的 {forum} 账户
