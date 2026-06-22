@@ -49,7 +49,7 @@ class AuthorizePageController implements RequestHandlerInterface
         }
 
         try {
-            [$client, $redirectUri, $requestedScopes, $state] = $this->flow->validateAuthorizeRequest($request->getQueryParams());
+            [$client, $redirectUri, $requestedScopes, $state, $nonce] = $this->flow->validateAuthorizeRequest($request->getQueryParams());
         } catch (Throwable $e) {
             return new HtmlResponse($this->page(
                 $this->trans('forum.page_title.invalid_request', [], 'Invalid OAuth request'),
@@ -75,12 +75,13 @@ class AuthorizePageController implements RequestHandlerInterface
             $redirectUri,
             $requestedScopes,
             $state,
+            $nonce,
             $csrfToken,
             $actor->display_name ?: $actor->username
         )));
     }
 
-    private function authorizeMarkup(Client $client, string $redirectUri, array $requestedScopes, string $state, string $csrfToken, string $displayName): string
+    private function authorizeMarkup(Client $client, string $redirectUri, array $requestedScopes, string $state, string $nonce, string $csrfToken, string $displayName): string
     {
         $scopeLabels = $this->scopes->all();
         $scopeItems = implode('', array_map(function ($scope) use ($scopeLabels) {
@@ -95,6 +96,7 @@ class AuthorizePageController implements RequestHandlerInterface
             'redirect_uri' => $redirectUri,
             'scope' => implode(' ', $requestedScopes),
             'state' => $state,
+            'nonce' => $nonce,
             'csrfToken' => $csrfToken,
         ];
 

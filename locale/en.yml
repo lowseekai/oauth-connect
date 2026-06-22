@@ -5,6 +5,8 @@ iseekup-oauth-connect:
     description: Turns this Flarum forum into an OAuth2 authorization center.
     endpoint_panel_title: OAuth2 endpoints
     endpoints:
+      discovery: OpenID discovery
+      jwks: JWKS
       authorization: Authorization
       token: Token
       user_info: UserInfo
@@ -81,6 +83,8 @@ iseekup-oauth-connect:
       homepage_url: Homepage URL
       icon_url: Icon URL
       enabled: Enabled
+      oidc_enabled: Enable OpenID Connect for this client
+      oidc_help: Enable this only for clients that use OIDC login. Existing OAuth2 clients can keep this disabled.
       description: Description
       redirect_uris: Redirect URIs
       redirect_uris_help: One exact redirect URI per line. Fragments are not allowed.
@@ -116,6 +120,9 @@ iseekup-oauth-connect:
       token_required: token is required.
     user_fallback: "User #{id}"
     scopes:
+      openid: OpenID Connect sign-in
+      profile: Standard profile claims
+      email: Standard email claims
       user_read: Basic profile
       user_email: Email address
       user_stats: Activity counters
@@ -163,7 +170,11 @@ iseekup-oauth-connect:
   errors:
     unknown_scope: "Unknown scope: {scope}"
     scope_not_allowed: "Scope is not allowed for this client: {scope}"
+    openid_required: OpenID Connect scopes require `openid`.
   scopes:
+    openid: Sign in with OpenID Connect
+    profile: Read standard profile claims
+    email: Read standard email claims
     user_read: Read basic profile
     user_email: Read email address
     user_stats: Read public activity counters

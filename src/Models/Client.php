@@ -12,6 +12,7 @@ class Client extends AbstractModel
 
     protected $casts = [
         'is_enabled' => 'bool',
+        'oidc_enabled' => 'bool',
     ];
 
     protected $dates = [
@@ -41,6 +42,11 @@ class Client extends AbstractModel
         $decoded = json_decode((string) $this->access_policy, true);
 
         return is_array($decoded) ? $decoded : [];
+    }
+
+    public function oidcEnabled(): bool
+    {
+        return (bool) $this->oidc_enabled;
     }
 
     public function allowsRedirectUri(string $redirectUri): bool

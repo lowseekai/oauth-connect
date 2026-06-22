@@ -37,7 +37,7 @@ class AuthorizeController implements RequestHandlerInterface
         $body = $this->data->all($request);
 
         try {
-            [$client, $redirectUri, $scopes, $state] = $this->flow->validateAuthorizeRequest($body);
+            [$client, $redirectUri, $scopes, $state, $nonce] = $this->flow->validateAuthorizeRequest($body);
         } catch (Throwable $e) {
             $redirectUri = $this->flow->safeRedirectUri($body);
 
@@ -70,7 +70,7 @@ class AuthorizeController implements RequestHandlerInterface
             ]));
         }
 
-        $code = $this->flow->createAuthorizationCode($client, (int) $actor->id, $redirectUri, $scopes);
+        $code = $this->flow->createAuthorizationCode($client, (int) $actor->id, $redirectUri, $scopes, $nonce);
 
         return new RedirectResponse($this->withQuery($redirectUri, [
             'code' => $code->code,

@@ -26,6 +26,9 @@
   }
 
   var SCOPE_OPTIONS = [
+    { key: 'openid', labelKey: 'openid', label: 'OpenID Connect sign-in' },
+    { key: 'profile', labelKey: 'profile', label: 'Standard profile claims' },
+    { key: 'email', labelKey: 'email', label: 'Standard email claims' },
     { key: 'user.read', labelKey: 'user_read', label: 'Basic profile' },
     { key: 'user.email', labelKey: 'user_email', label: 'Email address' },
     { key: 'user.stats', labelKey: 'user_stats', label: 'Activity counters' },
@@ -245,6 +248,9 @@
       icon_url: '',
       redirect_uris: '',
       scopes: {
+        openid: false,
+        profile: false,
+        email: false,
         'user.read': true,
         'user.email': false,
         'user.stats': false,
@@ -252,6 +258,7 @@
         'user.trust': false,
       },
       access_policy: freshAccessPolicy(),
+      oidc_enabled: false,
       is_enabled: true,
     };
   }
@@ -265,6 +272,7 @@
     form.icon_url = client.icon_url || '';
     form.redirect_uris = (client.redirect_uris || []).join('\n');
     form.access_policy = accessPolicyToForm(client.access_policy);
+    form.oidc_enabled = !!client.oidc_enabled;
     form.is_enabled = !!client.is_enabled;
 
     SCOPE_OPTIONS.forEach(function (scope) {
@@ -306,6 +314,7 @@
         last_seen_within_days: nullableInteger(form.access_policy.last_seen_within_days),
         min_trust_level: nullableInteger(form.access_policy.min_trust_level),
       },
+      oidc_enabled: !!form.oidc_enabled,
       is_enabled: !!form.is_enabled,
     };
   }
@@ -535,6 +544,8 @@
     return m('.OAuthConnectPanel', [
       m('h3', t('endpoint_panel_title', {}, 'OAuth2 endpoints')),
       m('div.OAuthConnectEndpoints', [
+        this.endpointRow(t('endpoints.discovery', {}, 'OpenID discovery'), baseUrl + '/.well-known/openid-configuration'),
+        this.endpointRow(t('endpoints.jwks', {}, 'JWKS'), baseUrl + '/.well-known/jwks.json'),
         this.endpointRow(t('endpoints.authorization', {}, 'Authorization'), baseUrl + '/oauth2/authorize'),
         this.endpointRow(t('endpoints.token', {}, 'Token'), baseUrl + '/oauth2/token'),
         this.endpointRow(t('endpoints.user_info', {}, 'UserInfo'), apiUrl + '/oauth/user'),
@@ -708,6 +719,26 @@
           ]),
         ]),
       ]),
+      m('label.checkbox', [
+        m('input', {
+          type: 'checkbox',
+          checked: !!form.oidc_enabled,
+          onchange: function (event) {
+            form.oidc_enabled = event.currentTarget.checked;
+
+            if (form.oidc_enabled) {
+              form.scopes.openid = true;
+              form.scopes.profile = true;
+            } else {
+              form.scopes.openid = false;
+              form.scopes.profile = false;
+              form.scopes.email = false;
+            }
+          },
+        }),
+        m('span', t('form.oidc_enabled', {}, 'Enable OpenID Connect for this client')),
+      ]),
+      m('p.helpText', t('form.oidc_help', {}, 'Enable this only for clients that use OIDC login. Existing OAuth2 clients can keep this disabled.')),
       m('label', [
         m('span', t('form.description', {}, 'Description')),
         m('textarea.FormControl', {

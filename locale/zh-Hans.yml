@@ -5,6 +5,8 @@ iseekup-oauth-connect:
     description: 将当前 Flarum 论坛变成 OAuth2 授权中心。
     endpoint_panel_title: OAuth2 接口地址
     endpoints:
+      discovery: OpenID 自动发现
+      jwks: JWKS 公钥集
       authorization: 授权地址
       token: 令牌地址
       user_info: 用户信息
@@ -81,6 +83,8 @@ iseekup-oauth-connect:
       homepage_url: 主页 URL
       icon_url: 图标 URL
       enabled: 启用状态
+      oidc_enabled: 为该客户端启用 OpenID Connect
+      oidc_help: 仅在该客户端需要使用 OIDC 登录时启用；普通 OAuth2 客户端保持关闭即可。
       description: 描述
       redirect_uris: 回调地址
       redirect_uris_help: 每行填写一个完整且精确匹配的回调地址，不允许包含 URL 片段。
@@ -116,6 +120,9 @@ iseekup-oauth-connect:
       token_required: 缺少 token。
     user_fallback: "用户 #{id}"
     scopes:
+      openid: OpenID Connect 登录
+      profile: 标准资料声明
+      email: 标准邮箱声明
       user_read: 基本资料
       user_email: 邮箱地址
       user_stats: 活跃数据
@@ -163,7 +170,11 @@ iseekup-oauth-connect:
   errors:
     unknown_scope: "未知授权范围：{scope}"
     scope_not_allowed: "该客户端不允许请求此授权范围：{scope}"
+    openid_required: 请求 OpenID Connect 范围时必须包含 openid。
   scopes:
+    openid: 使用 OpenID Connect 登录
+    profile: 读取标准资料声明
+    email: 读取标准邮箱声明
     user_read: 读取基本资料
     user_email: 读取邮箱地址
     user_stats: 读取公开活跃数据

@@ -5,8 +5,10 @@ use ISeekUp\OAuthConnect\Controllers\AuthorizeController;
 use ISeekUp\OAuthConnect\Controllers\AuthorizePageController;
 use ISeekUp\OAuthConnect\Controllers\CreateClientController;
 use ISeekUp\OAuthConnect\Controllers\DeleteClientController;
+use ISeekUp\OAuthConnect\Controllers\JwksController;
 use ISeekUp\OAuthConnect\Controllers\ListAuthorizationsController;
 use ISeekUp\OAuthConnect\Controllers\ListClientsController;
+use ISeekUp\OAuthConnect\Controllers\OpenIdConfigurationController;
 use ISeekUp\OAuthConnect\Controllers\ResetClientSecretController;
 use ISeekUp\OAuthConnect\Controllers\RevokeAuthorizationController;
 use ISeekUp\OAuthConnect\Controllers\RevokeTokenController;
@@ -23,6 +25,8 @@ return [
         ->css(__DIR__.'/less/admin.less'),
 
     (new Extend\Routes('forum'))
+        ->get('/.well-known/openid-configuration', 'oauth-connect.openid.configuration', OpenIdConfigurationController::class)
+        ->get('/.well-known/jwks.json', 'oauth-connect.openid.jwks', JwksController::class)
         ->get('/oauth2/authorize', 'oauth-connect.authorize', AuthorizePageController::class)
         ->post('/oauth2/authorize', 'oauth-connect.authorize.submit', AuthorizeController::class)
         ->post('/oauth2/token', 'oauth-connect.token', TokenController::class),

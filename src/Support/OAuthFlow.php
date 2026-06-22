@@ -69,7 +69,9 @@ class OAuthFlow
 
         $scope = $this->scopes->normalize($query['scope'] ?? '', $client);
 
-        return [$client, $redirectUri, $scope, $state];
+        $nonce = mb_substr((string) ($query['nonce'] ?? ''), 0, 255);
+
+        return [$client, $redirectUri, $scope, $state, $nonce];
     }
 
     public function accessPolicyFailure(Client $client, User $user): ?string
@@ -90,7 +92,7 @@ class OAuthFlow
         return $redirectUri;
     }
 
-    public function createAuthorizationCode(Client $client, int $userId, string $redirectUri, array $scopes): AuthorizationCode
+    public function createAuthorizationCode(Client $client, int $userId, string $redirectUri, array $scopes, ?string $nonce = null): AuthorizationCode
     {
         $code = new AuthorizationCode();
         $code->code = $this->uniqueAuthorizationCode();
@@ -98,6 +100,7 @@ class OAuthFlow
         $code->user_id = $userId;
         $code->redirect_uri = $redirectUri;
         $code->scope = $this->scopes->toString($scopes);
+        $code->nonce = $nonce ?: null;
         $code->expires_at = Carbon::now()->addSeconds($this->authorizationCodeLifetime());
         $code->save();
 

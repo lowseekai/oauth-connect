@@ -21,9 +21,18 @@ class UserInfoBuilder
             'active' => (bool) $user->is_email_confirmed && ! $suspended,
         ];
 
-        if (in_array('user.email', $scopes, true)) {
+        if (in_array('profile', $scopes, true)) {
+            $data['preferred_username'] = $user->username;
+
+            if ($user->avatar_url) {
+                $data['picture'] = $user->avatar_url;
+            }
+        }
+
+        if (in_array('user.email', $scopes, true) || in_array('email', $scopes, true)) {
             $data['email'] = $user->email;
             $data['is_email_confirmed'] = (bool) $user->is_email_confirmed;
+            $data['email_verified'] = (bool) $user->is_email_confirmed;
         }
 
         if (in_array('user.stats', $scopes, true)) {

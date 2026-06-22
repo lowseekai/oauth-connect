@@ -10,7 +10,9 @@ use ISeekUp\OAuthConnect\Repositories\ClientRepository;
 use ISeekUp\OAuthConnect\Repositories\TokenRepository;
 use ISeekUp\OAuthConnect\Support\AccessPolicy;
 use ISeekUp\OAuthConnect\Support\OAuthErrorResponse;
+use ISeekUp\OAuthConnect\Support\OpenIdConnect;
 use ISeekUp\OAuthConnect\Support\RequestData;
+use ISeekUp\OAuthConnect\Support\ScopeRegistry;
 use Laminas\Diactoros\Response\JsonResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -23,19 +25,25 @@ class TokenController implements RequestHandlerInterface
     private $data;
     private $errors;
     private $accessPolicy;
+    private $openid;
+    private $scopes;
 
     public function __construct(
         ClientRepository $clients,
         TokenRepository $tokens,
         RequestData $data,
         OAuthErrorResponse $errors,
-        AccessPolicy $accessPolicy
+        AccessPolicy $accessPolicy,
+        OpenIdConnect $openid,
+        ScopeRegistry $scopes
     ) {
         $this->clients = $clients;
         $this->tokens = $tokens;
         $this->data = $data;
         $this->errors = $errors;
         $this->accessPolicy = $accessPolicy;
+        $this->openid = $openid;
+        $this->scopes = $scopes;
     }
 
     public function handle(ServerRequestInterface $request): ResponseInterface
@@ -99,13 +107,19 @@ class TokenController implements RequestHandlerInterface
         $code->used_at = Carbon::now();
         $code->save();
 
+        $scopes = $this->splitScope($code->scope);
+
         [$accessToken, $refreshToken] = $this->tokens->issuePair(
             $client->client_id,
             (int) $code->user_id,
-            $this->splitScope($code->scope)
+            $scopes
         );
 
-        return $this->tokenResponse($accessToken->token, $refreshToken->token, $accessToken->scope, $this->tokens->accessLifetime());
+        $idToken = $this->scopes->containsOpenId($scopes)
+            ? $this->openid->idToken($code->user, $client->client_id, $scopes, $code->nonce, $this->tokens->accessLifetime())
+            : null;
+
+        return $this->tokenResponse($accessToken->token, $refreshToken->token, $accessToken->scope, $this->tokens->accessLifetime(), $idToken);
     }
 
     private function refreshTokenGrant(Client $client, array $body): ResponseInterface
@@ -135,24 +149,36 @@ class TokenController implements RequestHandlerInterface
         $oldRefreshToken->revoked_at = Carbon::now();
         $oldRefreshToken->save();
 
+        $scopes = $oldRefreshToken->scopeList();
+
         [$accessToken, $refreshToken] = $this->tokens->issuePair(
             $client->client_id,
             (int) $oldRefreshToken->user_id,
-            $oldRefreshToken->scopeList()
+            $scopes
         );
 
-        return $this->tokenResponse($accessToken->token, $refreshToken->token, $accessToken->scope, $this->tokens->accessLifetime());
+        $idToken = $this->scopes->containsOpenId($scopes)
+            ? $this->openid->idToken($oldRefreshToken->user, $client->client_id, $scopes, null, $this->tokens->accessLifetime())
+            : null;
+
+        return $this->tokenResponse($accessToken->token, $refreshToken->token, $accessToken->scope, $this->tokens->accessLifetime(), $idToken);
     }
 
-    private function tokenResponse(string $accessToken, string $refreshToken, ?string $scope, int $expiresIn): JsonResponse
+    private function tokenResponse(string $accessToken, string $refreshToken, ?string $scope, int $expiresIn, ?string $idToken = null): JsonResponse
     {
-        return new JsonResponse([
+        $payload = [
             'access_token' => $accessToken,
             'token_type' => 'Bearer',
             'expires_in' => $expiresIn,
             'refresh_token' => $refreshToken,
             'scope' => $scope ?: 'user.read',
-        ], 200, [
+        ];
+
+        if ($idToken !== null) {
+            $payload['id_token'] = $idToken;
+        }
+
+        return new JsonResponse($payload, 200, [
             'Cache-Control' => 'no-store',
             'Pragma' => 'no-cache',
         ]);

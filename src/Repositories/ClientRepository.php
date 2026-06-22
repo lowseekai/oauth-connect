@@ -102,6 +102,7 @@ class ClientRepository
             'redirect_uris' => $client->redirectUris(),
             'scopes' => $client->scopeList(),
             'access_policy' => $this->accessPolicy->normalize($client->accessPolicy()),
+            'oidc_enabled' => $client->oidcEnabled(),
             'grant_types' => $client->grantTypeList(),
             'is_enabled' => (bool) $client->is_enabled,
             'created_at' => $this->date($client->created_at),
@@ -128,6 +129,7 @@ class ClientRepository
         $client->homepage_url = $this->nullableUrl($data['homepage_url'] ?? null, true);
         $client->icon_url = $this->nullableUrl($data['icon_url'] ?? null, true);
         $client->redirect_uris = json_encode($this->redirectUris($data['redirect_uris'] ?? $data['redirect_uri'] ?? []));
+        $client->oidc_enabled = array_key_exists('oidc_enabled', $data) ? (bool) $data['oidc_enabled'] : ($creating ? false : (bool) $client->oidc_enabled);
         $client->scopes = $this->scopes->toString($this->scopes->normalize($data['scopes'] ?? $this->scopes->defaults()));
         $client->access_policy = json_encode($this->accessPolicy->normalize($data['access_policy'] ?? $client->accessPolicy()));
         $client->grant_types = 'authorization_code refresh_token';

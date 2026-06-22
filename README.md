@@ -9,10 +9,10 @@ This is a first-version provider extension for `iseekup/oauth-connect`. It is de
 - Authorization Code grant
 - Refresh Token grant with refresh token rotation
 - Bearer token UserInfo endpoint
+- OpenID Connect discovery, JWKS, and RS256 ID tokens
 
 Not included in this version:
 
-- OpenID Connect ID tokens
 - PKCE
 - Implicit grant
 - Password grant
@@ -23,6 +23,8 @@ Not included in this version:
 
 Use the forum base URL for OAuth endpoints:
 
+- OpenID discovery: `/.well-known/openid-configuration`
+- JWKS: `/.well-known/jwks.json`
 - Authorization: `/oauth2/authorize`
 - Token: `/oauth2/token`
 
@@ -32,6 +34,14 @@ Use the API base URL for UserInfo endpoints:
 - UserInfo alias: `/api/user`
 
 ## Scopes
+
+OpenID Connect clients can request standard scopes:
+
+- `openid`: request an ID token
+- `profile`: standard profile claims
+- `email`: standard email claims
+
+OIDC must also be enabled for the client in the admin panel. Existing OAuth2 clients remain non-OIDC unless this switch is enabled.
 
 - `user.read`: basic profile
 - `user.email`: email address and email confirmation state
