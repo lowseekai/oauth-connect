@@ -1,21 +1,21 @@
 <?php
 
 use Flarum\Extend;
-use ISeekUp\OAuthConnect\Controllers\AuthorizeController;
-use ISeekUp\OAuthConnect\Controllers\AuthorizePageController;
-use ISeekUp\OAuthConnect\Controllers\CreateClientController;
-use ISeekUp\OAuthConnect\Controllers\DeleteClientController;
-use ISeekUp\OAuthConnect\Controllers\JwksController;
-use ISeekUp\OAuthConnect\Controllers\ListAuthorizationsController;
-use ISeekUp\OAuthConnect\Controllers\ListClientsController;
-use ISeekUp\OAuthConnect\Controllers\OpenIdConfigurationController;
-use ISeekUp\OAuthConnect\Controllers\ResetClientSecretController;
-use ISeekUp\OAuthConnect\Controllers\RevokeAuthorizationController;
-use ISeekUp\OAuthConnect\Controllers\RevokeTokenController;
-use ISeekUp\OAuthConnect\Controllers\TokenController;
-use ISeekUp\OAuthConnect\Controllers\UpdateClientController;
-use ISeekUp\OAuthConnect\Controllers\UserInfoController;
-use ISeekUp\OAuthConnect\Middlewares\OAuthBearerMiddleware;
+use Lowseekai\OAuthConnect\Controllers\AuthorizeController;
+use Lowseekai\OAuthConnect\Controllers\AuthorizePageController;
+use Lowseekai\OAuthConnect\Controllers\CreateClientController;
+use Lowseekai\OAuthConnect\Controllers\DeleteClientController;
+use Lowseekai\OAuthConnect\Controllers\JwksController;
+use Lowseekai\OAuthConnect\Controllers\ListAuthorizationsController;
+use Lowseekai\OAuthConnect\Controllers\ListClientsController;
+use Lowseekai\OAuthConnect\Controllers\OpenIdConfigurationController;
+use Lowseekai\OAuthConnect\Controllers\ResetClientSecretController;
+use Lowseekai\OAuthConnect\Controllers\RevokeAuthorizationController;
+use Lowseekai\OAuthConnect\Controllers\RevokeTokenController;
+use Lowseekai\OAuthConnect\Controllers\TokenController;
+use Lowseekai\OAuthConnect\Controllers\UpdateClientController;
+use Lowseekai\OAuthConnect\Controllers\UserInfoController;
+use Lowseekai\OAuthConnect\Middlewares\OAuthBearerMiddleware;
 
 return [
     new Extend\Locales(__DIR__.'/locale'),

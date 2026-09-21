@@ -1,9 +1,9 @@
 <?php
 
-namespace ISeekUp\OAuthConnect\Middlewares;
+namespace Lowseekai\OAuthConnect\Middlewares;
 
 use Flarum\Http\RequestUtil;
-use ISeekUp\OAuthConnect\Models\AccessToken;
+use Lowseekai\OAuthConnect\Models\AccessToken;
 use Laminas\Diactoros\Response\JsonResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;

@@ -1,12 +1,12 @@
 <?php
 
-namespace ISeekUp\OAuthConnect\Controllers;
+namespace Lowseekai\OAuthConnect\Controllers;
 
 use Flarum\Http\RequestUtil;
-use ISeekUp\OAuthConnect\Repositories\ClientRepository;
-use ISeekUp\OAuthConnect\Support\AccessPolicy;
-use ISeekUp\OAuthConnect\Support\OAuthErrorResponse;
-use ISeekUp\OAuthConnect\Support\UserInfoBuilder;
+use Lowseekai\OAuthConnect\Repositories\ClientRepository;
+use Lowseekai\OAuthConnect\Support\AccessPolicy;
+use Lowseekai\OAuthConnect\Support\OAuthErrorResponse;
+use Lowseekai\OAuthConnect\Support\UserInfoBuilder;
 use Laminas\Diactoros\Response\JsonResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;

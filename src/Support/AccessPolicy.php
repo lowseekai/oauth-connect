@@ -1,10 +1,10 @@
 <?php
 
-namespace ISeekUp\OAuthConnect\Support;
+namespace Lowseekai\OAuthConnect\Support;
 
 use Carbon\Carbon;
 use Flarum\User\User;
-use ISeekUp\OAuthConnect\Models\Client;
+use Lowseekai\OAuthConnect\Models\Client;
 
 class AccessPolicy
 {

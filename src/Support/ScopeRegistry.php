@@ -1,9 +1,9 @@
 <?php
 
-namespace ISeekUp\OAuthConnect\Support;
+namespace Lowseekai\OAuthConnect\Support;
 
 use InvalidArgumentException;
-use ISeekUp\OAuthConnect\Models\Client;
+use Lowseekai\OAuthConnect\Models\Client;
 
 class ScopeRegistry
 {

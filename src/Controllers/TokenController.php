@@ -1,18 +1,18 @@
 <?php
 
-namespace ISeekUp\OAuthConnect\Controllers;
+namespace Lowseekai\OAuthConnect\Controllers;
 
 use Carbon\Carbon;
-use ISeekUp\OAuthConnect\Models\AuthorizationCode;
-use ISeekUp\OAuthConnect\Models\Client;
-use ISeekUp\OAuthConnect\Models\RefreshToken;
-use ISeekUp\OAuthConnect\Repositories\ClientRepository;
-use ISeekUp\OAuthConnect\Repositories\TokenRepository;
-use ISeekUp\OAuthConnect\Support\AccessPolicy;
-use ISeekUp\OAuthConnect\Support\OAuthErrorResponse;
-use ISeekUp\OAuthConnect\Support\OpenIdConnect;
-use ISeekUp\OAuthConnect\Support\RequestData;
-use ISeekUp\OAuthConnect\Support\ScopeRegistry;
+use Lowseekai\OAuthConnect\Models\AuthorizationCode;
+use Lowseekai\OAuthConnect\Models\Client;
+use Lowseekai\OAuthConnect\Models\RefreshToken;
+use Lowseekai\OAuthConnect\Repositories\ClientRepository;
+use Lowseekai\OAuthConnect\Repositories\TokenRepository;
+use Lowseekai\OAuthConnect\Support\AccessPolicy;
+use Lowseekai\OAuthConnect\Support\OAuthErrorResponse;
+use Lowseekai\OAuthConnect\Support\OpenIdConnect;
+use Lowseekai\OAuthConnect\Support\RequestData;
+use Lowseekai\OAuthConnect\Support\ScopeRegistry;
 use Laminas\Diactoros\Response\JsonResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;

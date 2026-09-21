@@ -1,6 +1,6 @@
 <?php
 
-namespace ISeekUp\OAuthConnect\Support;
+namespace Lowseekai\OAuthConnect\Support;
 
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -15,7 +15,7 @@ class Translation
 
     public function trans(string $key, array $params = [], string $fallback = ''): string
     {
-        $id = strpos($key, 'iseekup-oauth-connect.') === 0 ? $key : 'iseekup-oauth-connect.'.$key;
+        $id = strpos($key, 'lowseekai-oauth-connect.') === 0 ? $key : 'lowseekai-oauth-connect.'.$key;
         $translated = $this->translator->trans($id, $this->parameters($params));
 
         return $translated === $id ? $this->fallback($fallback, $params) : $translated;

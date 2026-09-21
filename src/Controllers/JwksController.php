@@ -1,8 +1,8 @@
 <?php
 
-namespace ISeekUp\OAuthConnect\Controllers;
+namespace Lowseekai\OAuthConnect\Controllers;
 
-use ISeekUp\OAuthConnect\Support\OpenIdConnect;
+use Lowseekai\OAuthConnect\Support\OpenIdConnect;
 use Laminas\Diactoros\Response\JsonResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;

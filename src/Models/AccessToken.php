@@ -1,6 +1,6 @@
 <?php
 
-namespace ISeekUp\OAuthConnect\Models;
+namespace Lowseekai\OAuthConnect\Models;
 
 use Carbon\Carbon;
 use Flarum\Database\AbstractModel;

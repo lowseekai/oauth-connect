@@ -1,6 +1,6 @@
 <?php
 
-namespace ISeekUp\OAuthConnect\Support;
+namespace Lowseekai\OAuthConnect\Support;
 
 use Carbon\Carbon;
 use Flarum\Foundation\Application;

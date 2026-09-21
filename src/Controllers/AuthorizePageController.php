@@ -1,14 +1,14 @@
 <?php
 
-namespace ISeekUp\OAuthConnect\Controllers;
+namespace Lowseekai\OAuthConnect\Controllers;
 
 use Flarum\Foundation\Application;
 use Flarum\Http\RequestUtil;
 use Flarum\Settings\SettingsRepositoryInterface;
-use ISeekUp\OAuthConnect\Models\Client;
-use ISeekUp\OAuthConnect\Support\OAuthFlow;
-use ISeekUp\OAuthConnect\Support\ScopeRegistry;
-use ISeekUp\OAuthConnect\Support\Translation;
+use Lowseekai\OAuthConnect\Models\Client;
+use Lowseekai\OAuthConnect\Support\OAuthFlow;
+use Lowseekai\OAuthConnect\Support\ScopeRegistry;
+use Lowseekai\OAuthConnect\Support\Translation;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;

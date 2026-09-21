@@ -2,7 +2,7 @@
 
 OAuth Connect turns a Flarum forum into an OAuth2 authorization server.
 
-This is a first-version provider extension for `iseekup/oauth-connect`. It is designed as a reusable Flarum extension, so another Flarum forum can install the same package and become its own OAuth2 authorization center.
+This is a Flarum 2.x provider extension for `lowseekai/oauth-connect`. It is designed as a reusable Flarum extension, so another Flarum forum can install the same package and become its own OAuth2 authorization center.
 
 ## Supported flows
 
@@ -84,8 +84,8 @@ Client secrets are stored with `password_hash()` and only shown once when create
 Install from Packagist after this package has been submitted:
 
 ```sh
-composer require iseekup/oauth-connect:^0.1
-php flarum extension:enable iseekup-oauth-connect
+composer require lowseekai/oauth-connect:^0.1
+php flarum extension:enable lowseekai-oauth-connect
 php flarum migrate
 php flarum cache:clear
 php flarum assets:publish
@@ -94,9 +94,9 @@ php flarum assets:publish
 If you install before the package is available on Packagist, add the GitHub repository first:
 
 ```sh
-composer config repositories.gungun88-oauth-connect vcs https://github.com/gungun88/oauth-connect.git
-composer require iseekup/oauth-connect:^0.1
-php flarum extension:enable iseekup-oauth-connect
+composer config repositories.lowseekai-oauth-connect vcs https://github.com/lowseekai/oauth-connect.git
+composer require lowseekai/oauth-connect:^0.1
+php flarum extension:enable lowseekai-oauth-connect
 php flarum migrate
 php flarum cache:clear
 php flarum assets:publish
@@ -105,8 +105,8 @@ php flarum assets:publish
 For Docker Compose deployments, run the same commands inside the Flarum service:
 
 ```sh
-docker compose run --rm flarum composer require iseekup/oauth-connect:^0.1
-docker compose run --rm flarum php flarum extension:enable iseekup-oauth-connect
+docker compose run --rm flarum composer require lowseekai/oauth-connect:^0.1
+docker compose run --rm flarum php flarum extension:enable lowseekai-oauth-connect
 docker compose run --rm flarum php flarum migrate
 docker compose run --rm flarum php flarum cache:clear
 docker compose run --rm flarum php flarum assets:publish
@@ -115,7 +115,7 @@ docker compose run --rm flarum php flarum assets:publish
 Update an existing installation:
 
 ```sh
-composer update iseekup/oauth-connect --with-dependencies
+composer update lowseekai/oauth-connect --with-dependencies
 php flarum migrate
 php flarum cache:clear
 php flarum assets:publish
@@ -140,7 +140,7 @@ docker compose run --rm flarum php -r '$f="composer.json"; $j=json_decode(file_g
 Then retry:
 
 ```sh
-docker compose run --rm flarum composer require iseekup/oauth-connect:^0.1
+docker compose run --rm flarum composer require lowseekai/oauth-connect:^0.1
 ```
 
 ## Development installation
@@ -152,7 +152,7 @@ For local development, add this repository as a path repository in a Flarum inst
     "repositories": [
         {
             "type": "path",
-            "url": "packages/iseekup/oauth-connect",
+            "url": "packages/lowseekai/oauth-connect",
             "options": {
                 "symlink": true
             }
@@ -164,8 +164,8 @@ For local development, add this repository as a path repository in a Flarum inst
 Then run:
 
 ```sh
-composer require iseekup/oauth-connect:*@dev
-php flarum extension:enable iseekup-oauth-connect
+composer require lowseekai/oauth-connect:*@dev
+php flarum extension:enable lowseekai-oauth-connect
 php flarum migrate
 php flarum cache:clear
 ```

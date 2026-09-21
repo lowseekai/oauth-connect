@@ -1,10 +1,10 @@
 <?php
 
-namespace ISeekUp\OAuthConnect\Controllers;
+namespace Lowseekai\OAuthConnect\Controllers;
 
 use Carbon\Carbon;
 use Flarum\Http\RequestUtil;
-use ISeekUp\OAuthConnect\Models\ClientAuthorization;
+use Lowseekai\OAuthConnect\Models\ClientAuthorization;
 use Laminas\Diactoros\Response\JsonResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;

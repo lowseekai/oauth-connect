@@ -1,6 +1,6 @@
 <?php
 
-namespace ISeekUp\OAuthConnect\Support;
+namespace Lowseekai\OAuthConnect\Support;
 
 class RandomGenerator
 {

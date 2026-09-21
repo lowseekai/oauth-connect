@@ -1,0 +1,15 @@
+{
+  "private": true,
+  "name": "@lowseekai/oauth-connect-admin",
+  "version": "1.0.0",
+  "description": "Admin frontend for the Lowseekai OAuth Connect Flarum extension.",
+  "scripts": {
+    "build": "webpack --mode production",
+    "build:dev": "webpack --mode development"
+  },
+  "devDependencies": {
+    "flarum-webpack-config": "^3.0.4",
+    "webpack": "^5.0.0",
+    "webpack-cli": "^5.0.0"
+  }
+}

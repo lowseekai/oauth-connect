@@ -1,18 +1,18 @@
 <?php
 
-namespace ISeekUp\OAuthConnect\Repositories;
+namespace Lowseekai\OAuthConnect\Repositories;
 
 use Carbon\Carbon;
 use InvalidArgumentException;
-use ISeekUp\OAuthConnect\Models\AccessToken;
-use ISeekUp\OAuthConnect\Models\AuthorizationCode;
-use ISeekUp\OAuthConnect\Models\Client;
-use ISeekUp\OAuthConnect\Models\ClientAuthorization;
-use ISeekUp\OAuthConnect\Models\RefreshToken;
-use ISeekUp\OAuthConnect\Support\AccessPolicy;
-use ISeekUp\OAuthConnect\Support\RandomGenerator;
-use ISeekUp\OAuthConnect\Support\ScopeRegistry;
-use ISeekUp\OAuthConnect\Support\Translation;
+use Lowseekai\OAuthConnect\Models\AccessToken;
+use Lowseekai\OAuthConnect\Models\AuthorizationCode;
+use Lowseekai\OAuthConnect\Models\Client;
+use Lowseekai\OAuthConnect\Models\ClientAuthorization;
+use Lowseekai\OAuthConnect\Models\RefreshToken;
+use Lowseekai\OAuthConnect\Support\AccessPolicy;
+use Lowseekai\OAuthConnect\Support\RandomGenerator;
+use Lowseekai\OAuthConnect\Support\ScopeRegistry;
+use Lowseekai\OAuthConnect\Support\Translation;
 
 class ClientRepository
 {

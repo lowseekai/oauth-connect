@@ -1,13 +1,13 @@
 <?php
 
-namespace ISeekUp\OAuthConnect\Repositories;
+namespace Lowseekai\OAuthConnect\Repositories;
 
 use Carbon\Carbon;
 use Flarum\Settings\SettingsRepositoryInterface;
-use ISeekUp\OAuthConnect\Models\AccessToken;
-use ISeekUp\OAuthConnect\Models\RefreshToken;
-use ISeekUp\OAuthConnect\Support\RandomGenerator;
-use ISeekUp\OAuthConnect\Support\ScopeRegistry;
+use Lowseekai\OAuthConnect\Models\AccessToken;
+use Lowseekai\OAuthConnect\Models\RefreshToken;
+use Lowseekai\OAuthConnect\Support\RandomGenerator;
+use Lowseekai\OAuthConnect\Support\ScopeRegistry;
 
 class TokenRepository
 {

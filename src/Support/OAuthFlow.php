@@ -1,15 +1,15 @@
 <?php
 
-namespace ISeekUp\OAuthConnect\Support;
+namespace Lowseekai\OAuthConnect\Support;
 
 use Carbon\Carbon;
 use Flarum\Settings\SettingsRepositoryInterface;
 use Flarum\User\User;
 use InvalidArgumentException;
-use ISeekUp\OAuthConnect\Models\AuthorizationCode;
-use ISeekUp\OAuthConnect\Models\Client;
-use ISeekUp\OAuthConnect\Models\ClientAuthorization;
-use ISeekUp\OAuthConnect\Repositories\ClientRepository;
+use Lowseekai\OAuthConnect\Models\AuthorizationCode;
+use Lowseekai\OAuthConnect\Models\Client;
+use Lowseekai\OAuthConnect\Models\ClientAuthorization;
+use Lowseekai\OAuthConnect\Repositories\ClientRepository;
 
 class OAuthFlow
 {

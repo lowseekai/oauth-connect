@@ -1,20 +1,28 @@
 {
-    "name": "iseekup/oauth-connect",
+    "name": "lowseekai/oauth-connect",
     "description": "OAuth2 provider for Flarum forums.",
     "type": "flarum-extension",
     "license": "MIT",
-    "homepage": "https://github.com/gungun88/oauth-connect",
+    "homepage": "https://github.com/lowseekai/oauth-connect",
     "support": {
-        "issues": "https://github.com/gungun88/oauth-connect/issues",
-        "source": "https://github.com/gungun88/oauth-connect"
+        "issues": "https://github.com/lowseekai/oauth-connect/issues",
+        "source": "https://github.com/lowseekai/oauth-connect"
     },
     "require": {
-        "flarum/core": "^1.8"
+        "flarum/core": "^2.0.0-rc.8"
     },
     "autoload": {
         "psr-4": {
-            "ISeekUp\\OAuthConnect\\": "src/"
+            "Lowseekai\\OAuthConnect\\": "src/"
         }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Lowseekai\\OAuthConnect\\Tests\\": "tests/"
+        }
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^10.5"
     },
     "extra": {
         "flarum-extension": {

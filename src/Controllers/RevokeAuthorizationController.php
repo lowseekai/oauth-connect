@@ -1,14 +1,14 @@
 <?php
 
-namespace ISeekUp\OAuthConnect\Controllers;
+namespace Lowseekai\OAuthConnect\Controllers;
 
 use Carbon\Carbon;
 use Flarum\Http\RequestUtil;
-use ISeekUp\OAuthConnect\Models\AccessToken;
-use ISeekUp\OAuthConnect\Models\ClientAuthorization;
-use ISeekUp\OAuthConnect\Models\RefreshToken;
-use ISeekUp\OAuthConnect\Support\RequestData;
-use ISeekUp\OAuthConnect\Support\Translation;
+use Lowseekai\OAuthConnect\Models\AccessToken;
+use Lowseekai\OAuthConnect\Models\ClientAuthorization;
+use Lowseekai\OAuthConnect\Models\RefreshToken;
+use Lowseekai\OAuthConnect\Support\RequestData;
+use Lowseekai\OAuthConnect\Support\Translation;
 use Laminas\Diactoros\Response\JsonResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;

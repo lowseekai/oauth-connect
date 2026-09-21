@@ -1,6 +1,6 @@
 <?php
 
-namespace ISeekUp\OAuthConnect\Models;
+namespace Lowseekai\OAuthConnect\Models;
 
 use Flarum\Database\AbstractModel;
 use Flarum\User\User;

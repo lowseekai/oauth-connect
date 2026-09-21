@@ -1,10 +1,10 @@
 <?php
 
-namespace ISeekUp\OAuthConnect\Controllers;
+namespace Lowseekai\OAuthConnect\Controllers;
 
 use Flarum\Http\RequestUtil;
-use ISeekUp\OAuthConnect\Repositories\ClientRepository;
-use ISeekUp\OAuthConnect\Support\Translation;
+use Lowseekai\OAuthConnect\Repositories\ClientRepository;
+use Lowseekai\OAuthConnect\Support\Translation;
 use Laminas\Diactoros\Response\EmptyResponse;
 use Laminas\Diactoros\Response\JsonResponse;
 use Psr\Http\Message\ResponseInterface;
