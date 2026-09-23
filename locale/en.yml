@@ -157,9 +157,6 @@ lowseekai-oauth-connect:
       view: View
       reopen: Reopen
       cancel: Cancel
-      view: View
-      reopen: Reopen
-      cancel: Cancel
       none: No applications match the current filters.
       search_placeholder: Application or username
       confirm_approve: Approve this application and create a client?

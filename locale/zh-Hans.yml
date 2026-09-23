@@ -156,9 +156,6 @@ lowseekai-oauth-connect:
       view: 查看
       reopen: 重新审核
       cancel: 取消
-      view: 查看
-      reopen: 重新审核
-      cancel: 取消
       none: 当前筛选条件下没有申请。
       search_placeholder: 应用名称或用户名
       confirm_approve: 确定通过该申请并创建客户端吗？
