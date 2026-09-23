@@ -246,7 +246,7 @@ import Notification from 'flarum/forum/components/Notification';
     var self = this;
     var params = { limit: 50, page: self.directoryPage };
     if (self.directoryStatus !== 'all') params.status = self.directoryStatus;
-    app.request({ method: 'GET', url: api('/admin/directory'), params: params }).then(function (response) {
+    app.request({ method: 'GET', url: api('/admin/directory'), params: params, background: true }).then(function (response) {
       self.directory = response.data || [];
       self.directoryPages = response.meta && response.meta.total_pages ? response.meta.total_pages : 1;
       self.directoryTotal = response.meta && response.meta.total ? response.meta.total : 0;
