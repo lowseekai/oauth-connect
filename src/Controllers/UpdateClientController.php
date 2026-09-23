@@ -7,6 +7,7 @@ use InvalidArgumentException;
 use Lowseekai\OAuthConnect\Repositories\ClientRepository;
 use Lowseekai\OAuthConnect\Support\RequestData;
 use Lowseekai\OAuthConnect\Support\Translation;
+use Lowseekai\OAuthConnect\Support\AuthorizationCenterAccess;
 use Laminas\Diactoros\Response\JsonResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -30,7 +31,7 @@ class UpdateClientController implements RequestHandlerInterface
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        RequestUtil::getActor($request)->assertAdmin();
+        AuthorizationCenterAccess::assert(RequestUtil::getActor($request), 'oauthConnect.manageClients');
 
         $client = $this->clients->find((string) ($request->getQueryParams()['clientId'] ?? ''));
 

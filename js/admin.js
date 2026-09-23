@@ -1,1 +1,1 @@
-import './src/admin/legacy';
+import './src/admin';

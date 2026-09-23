@@ -5,6 +5,7 @@ namespace Lowseekai\OAuthConnect\Controllers;
 use Flarum\Http\RequestUtil;
 use Lowseekai\OAuthConnect\Models\Client;
 use Lowseekai\OAuthConnect\Repositories\ClientRepository;
+use Lowseekai\OAuthConnect\Support\AuthorizationCenterAccess;
 use Laminas\Diactoros\Response\JsonResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -21,14 +22,14 @@ class ListClientsController implements RequestHandlerInterface
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        RequestUtil::getActor($request)->assertAdmin();
+        AuthorizationCenterAccess::assert(RequestUtil::getActor($request), 'oauthConnect.manageClients');
 
         $params = $request->getQueryParams();
         $page = max(1, (int) ($params['page_number'] ?? 1));
         $limit = min(100, max(1, (int) ($params['limit'] ?? 20)));
         $offset = ($page - 1) * $limit;
 
-        $query = Client::query();
+        $query = Client::whereNull('deleted_at');
 
         $status = (string) ($params['status'] ?? '');
 

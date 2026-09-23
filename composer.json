@@ -9,7 +9,8 @@
         "source": "https://github.com/lowseekai/oauth-connect"
     },
     "require": {
-        "flarum/core": "^2.0.0-rc.8"
+        "flarum/core": "^2.0.0-rc.8",
+        "ext-sodium": "*"
     },
     "autoload": {
         "psr-4": {

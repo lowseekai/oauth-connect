@@ -5,6 +5,7 @@ namespace Lowseekai\OAuthConnect\Controllers;
 use Flarum\Http\RequestUtil;
 use Lowseekai\OAuthConnect\Repositories\ClientRepository;
 use Lowseekai\OAuthConnect\Support\Translation;
+use Lowseekai\OAuthConnect\Support\AuthorizationCenterAccess;
 use Laminas\Diactoros\Response\EmptyResponse;
 use Laminas\Diactoros\Response\JsonResponse;
 use Psr\Http\Message\ResponseInterface;
@@ -24,7 +25,7 @@ class DeleteClientController implements RequestHandlerInterface
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        RequestUtil::getActor($request)->assertAdmin();
+        AuthorizationCenterAccess::assert(RequestUtil::getActor($request), 'oauthConnect.manageClients');
 
         $client = $this->clients->find((string) ($request->getQueryParams()['clientId'] ?? ''));
 

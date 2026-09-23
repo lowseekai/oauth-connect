@@ -118,6 +118,12 @@ lowseekai-oauth-connect:
       invalid_url: "URL 无效：{url}"
       revoke_authorization_required: 缺少 client_id 或 user_id。
       token_required: 缺少 token。
+      application_name_required: 请填写应用名称。
+      application_description_required: 请填写应用介绍。
+      review_note_required: 请填写审核理由。
+      application_not_pending: 该申请已不在待审核状态。
+      application_redirect_uri_invalid: "应用回调地址无效：{uri}"
+      application_homepage_invalid: 应用主页必须是有效的 HTTPS 地址。
     user_fallback: "用户 #{id}"
     scopes:
       openid: OpenID Connect 登录
@@ -130,7 +136,89 @@ lowseekai-oauth-connect:
       user_trust: 信任等级
     access_policy:
       enabled_badge: 已启用准入策略
+    permissions:
+      submit_application: 提交 OAuth 应用申请
+      manage_applications: 审核 OAuth 应用申请
+      manage_clients: 管理全部 OAuth 客户端
+      view_audit_log: 查看 OAuth 审计日志
+      manage_authorizations: 管理 OAuth 授权和令牌
+    applications:
+      title: OAuth 应用审核
+      description: 审核用户申请后再发放 OAuth 凭证。
+      pending: 待审核
+      approved: 已通过
+      rejected: 已拒绝
+      withdrawn: 已撤回
+      cancelled: 已取消
+      approve: 通过
+      reject: 拒绝
+      review: 审核
+      view: 查看
+      reopen: 重新审核
+      cancel: 取消
+      view: 查看
+      reopen: 重新审核
+      cancel: 取消
+      none: 当前筛选条件下没有申请。
+      search_placeholder: 应用名称或用户名
+      confirm_approve: 确定通过该申请并创建客户端吗？
+      reject_reason: 请输入拒绝理由：
+      secret_notice: 客户端密钥：
+      open: 审核申请
+      audit_logs: 审计日志
+      detail: 申请详情
+      created_at: 提交时间
+      requested_scopes: 申请权限范围
+      review_note: 审核备注
+      audit_history: 申请历史
+      no_history: 暂无历史记录。
+      confirm_reject: 确认拒绝
+      confirm_cancel: 确定取消该申请吗？
+      confirm_reopen: 确定重新进入审核吗？
+      approval_options: 审核选项
+      approved_scopes: 允许的权限范围
+      back_to_applications: 返回申请列表
+    audit:
+      title: OAuth 审计日志
+      description: 查看授权中心操作记录。
+      time: 时间
+      action: 动作
+      target: 目标
+      actor: 操作者
   forum:
+    title: 授权中心
+    description: 管理连接到论坛账号的应用。
+    nav: 授权中心
+    new_application: 申请应用接入
+    cancel: 取消
+    my_applications: 我的应用接入
+    my_clients: 我的客户端
+    no_clients: 暂无已通过审核的客户端。
+    enabled: 已启用
+    disabled: 已停用
+    enable: 启用
+    disable: 停用
+    reset_secret: 重置密钥
+    confirm_reset_secret: 确定重置密钥并撤销现有令牌吗？
+    no_applications: 你还没有提交应用申请。
+    loading: 加载中...
+    submitting: 提交中...
+    submit: 提交申请
+    view_credentials: 查看客户端凭证
+    client_id: "客户端 ID："
+    client_secret: "客户端密钥："
+    secret_unavailable: 客户端密钥已经查看过；如果忘记，请执行重置。
+    withdraw: 撤回
+    confirm_withdraw: 确定撤回该申请吗？
+    request_failed: 请求失败。
+    form:
+      title: 新建应用申请
+      name: 应用名称
+      description: 应用介绍
+      homepage_url: 应用主页
+      application_note: 申请说明
+      redirect_uris: 回调地址
+      redirect_help: 每行填写一个精确匹配的 HTTPS 回调地址。
     page_title:
       login_required: 需要登录
       invalid_request: OAuth 请求无效

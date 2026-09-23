@@ -3,18 +3,32 @@
 use Flarum\Extend;
 use Lowseekai\OAuthConnect\Controllers\AuthorizeController;
 use Lowseekai\OAuthConnect\Controllers\AuthorizePageController;
+use Lowseekai\OAuthConnect\Controllers\ApproveApplicationController;
+use Lowseekai\OAuthConnect\Controllers\CancelApplicationController;
 use Lowseekai\OAuthConnect\Controllers\CreateClientController;
+use Lowseekai\OAuthConnect\Controllers\CreateApplicationController;
 use Lowseekai\OAuthConnect\Controllers\DeleteClientController;
 use Lowseekai\OAuthConnect\Controllers\JwksController;
 use Lowseekai\OAuthConnect\Controllers\ListAuthorizationsController;
+use Lowseekai\OAuthConnect\Controllers\ListAdminApplicationsController;
+use Lowseekai\OAuthConnect\Controllers\ListAuditLogsController;
 use Lowseekai\OAuthConnect\Controllers\ListClientsController;
+use Lowseekai\OAuthConnect\Controllers\ListMyApplicationsController;
+use Lowseekai\OAuthConnect\Controllers\ListMyClientsController;
 use Lowseekai\OAuthConnect\Controllers\OpenIdConfigurationController;
 use Lowseekai\OAuthConnect\Controllers\ResetClientSecretController;
 use Lowseekai\OAuthConnect\Controllers\RevokeAuthorizationController;
 use Lowseekai\OAuthConnect\Controllers\RevokeTokenController;
+use Lowseekai\OAuthConnect\Controllers\RejectApplicationController;
+use Lowseekai\OAuthConnect\Controllers\ResetMyClientSecretController;
+use Lowseekai\OAuthConnect\Controllers\ReopenApplicationController;
+use Lowseekai\OAuthConnect\Controllers\ShowAdminApplicationController;
+use Lowseekai\OAuthConnect\Controllers\ShowMyApplicationController;
+use Lowseekai\OAuthConnect\Controllers\ToggleMyClientController;
 use Lowseekai\OAuthConnect\Controllers\TokenController;
 use Lowseekai\OAuthConnect\Controllers\UpdateClientController;
 use Lowseekai\OAuthConnect\Controllers\UserInfoController;
+use Lowseekai\OAuthConnect\Controllers\WithdrawApplicationController;
 use Lowseekai\OAuthConnect\Middlewares\OAuthBearerMiddleware;
 
 return [
@@ -22,6 +36,11 @@ return [
 
     (new Extend\Frontend('admin'))
         ->js(__DIR__.'/js/dist/admin.js')
+        ->css(__DIR__.'/less/admin.less'),
+
+    (new Extend\Frontend('forum'))
+        ->route('/oauth-connect', 'oauth-connect.center')
+        ->js(__DIR__.'/js/dist/forum.js')
         ->css(__DIR__.'/less/admin.less'),
 
     (new Extend\Routes('forum'))
@@ -39,6 +58,20 @@ return [
         ->patch('/oauth-connect/clients/{clientId}', 'oauth-connect.clients.update', UpdateClientController::class)
         ->delete('/oauth-connect/clients/{clientId}', 'oauth-connect.clients.delete', DeleteClientController::class)
         ->post('/oauth-connect/clients/{clientId}/reset-secret', 'oauth-connect.clients.reset-secret', ResetClientSecretController::class)
+        ->get('/oauth-connect/applications', 'oauth-connect.applications.index', ListMyApplicationsController::class)
+        ->post('/oauth-connect/applications', 'oauth-connect.applications.create', CreateApplicationController::class)
+        ->get('/oauth-connect/applications/{applicationId}', 'oauth-connect.applications.show', ShowMyApplicationController::class)
+        ->post('/oauth-connect/applications/{applicationId}/withdraw', 'oauth-connect.applications.withdraw', WithdrawApplicationController::class)
+        ->get('/oauth-connect/my-clients', 'oauth-connect.my-clients.index', ListMyClientsController::class)
+        ->post('/oauth-connect/my-clients/{clientId}/reset-secret', 'oauth-connect.my-clients.reset-secret', ResetMyClientSecretController::class)
+        ->post('/oauth-connect/my-clients/{clientId}/toggle', 'oauth-connect.my-clients.toggle', ToggleMyClientController::class)
+        ->get('/oauth-connect/admin/applications', 'oauth-connect.admin.applications.index', ListAdminApplicationsController::class)
+        ->get('/oauth-connect/admin/applications/{applicationId}', 'oauth-connect.admin.applications.show', ShowAdminApplicationController::class)
+        ->post('/oauth-connect/admin/applications/{applicationId}/approve', 'oauth-connect.admin.applications.approve', ApproveApplicationController::class)
+        ->post('/oauth-connect/admin/applications/{applicationId}/reject', 'oauth-connect.admin.applications.reject', RejectApplicationController::class)
+        ->post('/oauth-connect/admin/applications/{applicationId}/cancel', 'oauth-connect.admin.applications.cancel', CancelApplicationController::class)
+        ->post('/oauth-connect/admin/applications/{applicationId}/reopen', 'oauth-connect.admin.applications.reopen', ReopenApplicationController::class)
+        ->get('/oauth-connect/admin/audit-logs', 'oauth-connect.admin.audit-logs', ListAuditLogsController::class)
         ->get('/oauth-connect/authorizations', 'oauth-connect.authorizations.index', ListAuthorizationsController::class)
         ->post('/oauth-connect/authorizations/revoke', 'oauth-connect.authorizations.revoke', RevokeAuthorizationController::class)
         ->post('/oauth-connect/tokens/revoke', 'oauth-connect.tokens.revoke', RevokeTokenController::class),
@@ -53,5 +86,6 @@ return [
         ->default('iseekup.oauth-connect.access_token_lifetime', '7200')
         ->default('iseekup.oauth-connect.refresh_token_lifetime', '2592000')
         ->default('iseekup.oauth-connect.authorization_code_lifetime', '600')
-        ->default('iseekup.oauth-connect.require_state', '1'),
+        ->default('iseekup.oauth-connect.require_state', '1')
+        ->default('lowseekai.oauth-connect.allow_local_redirects', '0'),
 ];

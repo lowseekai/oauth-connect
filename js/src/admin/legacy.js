@@ -1,3 +1,7 @@
+import app from 'flarum/admin/app';
+import LoadingIndicator from 'flarum/common/components/LoadingIndicator';
+import setRouteWithForcedRefresh from 'flarum/common/utils/setRouteWithForcedRefresh';
+
 (function () {
   'use strict';
 
@@ -9,15 +13,9 @@
     return module && module.default ? module.default : module;
   }
 
-  var root = typeof flarum !== 'undefined' ? flarum : null;
-  var compat = root && root.core && root.core.compat ? root.core.compat : {};
-  var appModule = compat['admin/app'] || (typeof window !== 'undefined' ? window.app : null);
-  var app = getDefault(appModule);
-  var LoadingIndicator = getDefault(compat['common/components/LoadingIndicator'] || compat['components/LoadingIndicator']);
-  var setRouteWithForcedRefresh = getDefault(compat['common/utils/setRouteWithForcedRefresh'] || compat['utils/setRouteWithForcedRefresh']);
   var EXTENSION_ID = 'lowseekai-oauth-connect';
 
-  if (!app || !app.initializers || !app.extensionData) {
+  if (!app || !app.initializers || !app.registry) {
     if (typeof console !== 'undefined' && console.error) {
       console.error('[lowseekai/oauth-connect] Flarum admin app is not available.');
     }
@@ -134,6 +132,20 @@
     });
 
     return app.route('oauthConnectClients', routeParams);
+  }
+
+  function applicationsRoute(params) {
+    var routeParams = {};
+
+    Object.keys(params || {}).forEach(function (key) {
+      var value = params[key];
+
+      if (value !== undefined && value !== null && value !== '') {
+        routeParams[key] = value;
+      }
+    });
+
+    return app.route('oauthConnectApplications', routeParams);
   }
 
   function adminRouteUrl(route) {
@@ -530,6 +542,13 @@
     return m('.OAuthConnectPage', [
       this.error ? m('.Alert.Alert--error', this.error) : null,
       this.secretNotice ? this.secretPanel() : null,
+      m('.OAuthConnectPanel', [
+        m('.OAuthConnectPanelHeader', [
+          m('h3', t('applications.title', {}, 'OAuth application approvals')),
+          m('a.Button', routeLink(applicationsRoute()), t('applications.open', {}, 'Review applications')),
+        ]),
+        m('p.helpText', t('applications.description', {}, 'Review user applications before issuing OAuth credentials.')),
+      ]),
       this.endpointPanel(),
       this.createClientPanel(),
       this.clientsPanel(),
@@ -1473,7 +1492,34 @@
         component: OAuthConnectClientsPage,
       };
 
-      app.extensionData.for('lowseekai-oauth-connect').registerSetting(function () {
+      app.registry.for('lowseekai-oauth-connect')
+        .registerPermission({
+          icon: 'fas fa-plug',
+          label: app.translator.trans('lowseekai-oauth-connect.admin.permissions.submit_application'),
+          permission: 'oauthConnect.submitApplication',
+        }, 'view')
+        .registerPermission({
+          icon: 'fas fa-list-check',
+          label: app.translator.trans('lowseekai-oauth-connect.admin.permissions.manage_applications'),
+          permission: 'oauthConnect.manageApplications',
+        }, 'moderate')
+        .registerPermission({
+          icon: 'fas fa-key',
+          label: app.translator.trans('lowseekai-oauth-connect.admin.permissions.manage_clients'),
+          permission: 'oauthConnect.manageClients',
+        }, 'moderate')
+        .registerPermission({
+          icon: 'fas fa-clipboard-list',
+          label: app.translator.trans('lowseekai-oauth-connect.admin.permissions.view_audit_log'),
+          permission: 'oauthConnect.viewAuditLog',
+        }, 'moderate')
+        .registerPermission({
+          icon: 'fas fa-user-shield',
+          label: app.translator.trans('lowseekai-oauth-connect.admin.permissions.manage_authorizations'),
+          permission: 'oauthConnect.manageAuthorizations',
+        }, 'moderate');
+
+      app.registry.for('lowseekai-oauth-connect').registerSetting(function () {
         return m(OAuthConnectSettings);
       });
     } catch (error) {

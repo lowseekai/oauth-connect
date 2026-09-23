@@ -18,6 +18,9 @@ class Client extends AbstractModel
     protected $dates = [
         'created_at',
         'updated_at',
+        'approved_at',
+        'revoked_at',
+        'deleted_at',
     ];
 
     public function redirectUris(): array

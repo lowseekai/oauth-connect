@@ -35,12 +35,19 @@ class ClientRepository
 
     public function find(string $clientId): ?Client
     {
-        return Client::where('client_id', $clientId)->first();
+        return Client::where('client_id', $clientId)->whereNull('deleted_at')->first();
     }
 
     public function findEnabled(string $clientId): ?Client
     {
-        return Client::where('client_id', $clientId)->where('is_enabled', true)->first();
+        return Client::where('client_id', $clientId)
+            ->where('is_enabled', true)
+            ->whereNull('deleted_at')
+            ->whereNull('revoked_at')
+            ->where(function ($query) {
+                $query->whereNull('approval_status')->orWhere('approval_status', 'approved');
+            })
+            ->first();
     }
 
     public function create(array $data): array
@@ -88,7 +95,10 @@ class ClientRepository
         $this->revokeTokens($client);
 
         ClientAuthorization::where('client_id', $client->client_id)->update(['revoked_at' => Carbon::now()]);
-        $client->delete();
+        $client->is_enabled = false;
+        $client->revoked_at = Carbon::now();
+        $client->deleted_at = Carbon::now();
+        $client->save();
     }
 
     public function serialize(Client $client, ?string $secret = null): array
@@ -105,6 +115,12 @@ class ClientRepository
             'oidc_enabled' => $client->oidcEnabled(),
             'grant_types' => $client->grantTypeList(),
             'is_enabled' => (bool) $client->is_enabled,
+            'approval_status' => $client->approval_status ?: 'approved',
+            'owner_user_id' => $client->owner_user_id ? (int) $client->owner_user_id : null,
+            'application_id' => $client->application_id ? (int) $client->application_id : null,
+            'source' => $client->source ?: 'legacy',
+            'approved_at' => $this->date($client->approved_at),
+            'revoked_at' => $this->date($client->revoked_at),
             'created_at' => $this->date($client->created_at),
             'updated_at' => $this->date($client->updated_at),
         ];
@@ -134,6 +150,10 @@ class ClientRepository
         $client->access_policy = json_encode($this->accessPolicy->normalize($data['access_policy'] ?? $client->accessPolicy()));
         $client->grant_types = 'authorization_code refresh_token';
         $client->is_enabled = array_key_exists('is_enabled', $data) ? (bool) $data['is_enabled'] : ($creating || (bool) $client->is_enabled);
+        if ($creating) {
+            $client->approval_status = 'approved';
+            $client->source = 'admin';
+        }
     }
 
     private function redirectUris($value): array

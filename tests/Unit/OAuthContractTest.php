@@ -3,10 +3,12 @@
 namespace Lowseekai\OAuthConnect\Tests\Unit;
 
 use Carbon\Carbon;
+use Flarum\Foundation\Config;
 use Flarum\User\User;
 use Flarum\User\Avatar\DriverInterface as AvatarDriverInterface;
 use Flarum\User\DisplayName\DriverInterface as DisplayNameDriverInterface;
 use Lowseekai\OAuthConnect\Support\UserInfoBuilder;
+use Lowseekai\OAuthConnect\Support\SecretVault;
 use PHPUnit\Framework\TestCase;
 
 class OAuthContractTest extends TestCase
@@ -38,6 +40,69 @@ class OAuthContractTest extends TestCase
         self::assertStringContainsString("'jwks_uri'", $source);
         self::assertStringContainsString("openid-configuration", $routes);
         self::assertStringContainsString("jwks.json", $routes);
+    }
+
+    public function testAuthorizationCenterKeepsLegacyClientDefaultsAndAddsReviewRoutes(): void
+    {
+        $migration = file_get_contents(dirname(__DIR__, 2).'/migrations/2026_09_23_000000_add_authorization_center.php');
+        $routes = file_get_contents(dirname(__DIR__, 2).'/extend.php');
+
+        self::assertStringContainsString("'approval_status'", $migration);
+        self::assertStringContainsString("->default('approved')", $migration);
+        self::assertStringContainsString('oauth_connect_applications', $migration);
+        self::assertStringContainsString('oauth-connect.admin.applications.approve', $routes);
+        self::assertStringContainsString('oauth-connect.admin.applications.reject', $routes);
+        self::assertStringContainsString('oauth-connect.admin.applications.show', $routes);
+        self::assertStringContainsString('oauth-connect.admin.applications.cancel', $routes);
+        self::assertStringContainsString('oauth-connect.admin.applications.reopen', $routes);
+        self::assertStringContainsString('oauth-connect.admin.audit-logs', $routes);
+        self::assertStringContainsString('oauth-connect.my-clients', $routes);
+    }
+
+    public function testAuthorizationCenterDoesNotPhysicallyDeleteClients(): void
+    {
+        $source = file_get_contents(dirname(__DIR__, 2).'/src/Repositories/ClientRepository.php');
+
+        self::assertStringContainsString('$client->deleted_at = Carbon::now()', $source);
+        self::assertStringNotContainsString('$client->delete()', $source);
+        self::assertStringContainsString('client_secret_encrypted', file_get_contents(dirname(__DIR__, 2).'/src/Repositories/ApplicationRepository.php'));
+    }
+
+    public function testAuthorizationCenterUsesFlarumTwoCompatibleSecretVault(): void
+    {
+        $repository = file_get_contents(dirname(__DIR__, 2).'/src/Repositories/ApplicationRepository.php');
+        $vault = file_get_contents(dirname(__DIR__, 2).'/src/Support/SecretVault.php');
+
+        self::assertStringContainsString('SecretVault $vault', $repository);
+        self::assertStringNotContainsString('Illuminate\\Contracts\\Encryption\\Encrypter', $repository);
+        self::assertStringContainsString('sodium_crypto_secretbox', $vault);
+
+        $config = new Config([
+            'url' => 'https://lowseek.ai',
+            'oauth_connect' => ['secret_key' => base64_encode(random_bytes(32))],
+            'database' => [
+                'driver' => 'mysql',
+                'host' => '127.0.0.1',
+                'database' => 'forum',
+                'username' => 'forum',
+                'password' => 'test-password',
+            ],
+        ]);
+        $secretVault = new SecretVault($config);
+        $encrypted = $secretVault->encryptString('test-client-secret');
+
+        self::assertNotSame('test-client-secret', $encrypted);
+        self::assertSame('test-client-secret', $secretVault->decryptString($encrypted));
+    }
+
+    public function testAuthorizationCenterRegistersTheSubmissionPermissionAndDoesNotUseLegacyAlertsForSecrets(): void
+    {
+        $admin = file_get_contents(dirname(__DIR__, 2).'/js/src/admin/legacy.js');
+        $applications = file_get_contents(dirname(__DIR__, 2).'/js/src/admin/applications.js');
+
+        self::assertStringContainsString("oauthConnect.submitApplication", $admin);
+        self::assertStringContainsString("admin/audit-logs", $applications);
+        self::assertStringContainsString('serialize($client, $secret)', file_get_contents(dirname(__DIR__, 2).'/src/Controllers/ApproveApplicationController.php'));
     }
 
     public function testUserInfoHonorsProfileEmailAndStatsScopes(): void

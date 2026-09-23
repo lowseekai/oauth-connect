@@ -5,6 +5,7 @@ namespace Lowseekai\OAuthConnect\Controllers;
 use Carbon\Carbon;
 use Flarum\Http\RequestUtil;
 use Lowseekai\OAuthConnect\Models\ClientAuthorization;
+use Lowseekai\OAuthConnect\Support\AuthorizationCenterAccess;
 use Laminas\Diactoros\Response\JsonResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -14,7 +15,7 @@ class ListAuthorizationsController implements RequestHandlerInterface
 {
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        RequestUtil::getActor($request)->assertAdmin();
+        AuthorizationCenterAccess::assert(RequestUtil::getActor($request), 'oauthConnect.manageAuthorizations');
 
         $params = $request->getQueryParams();
         $pageParam = $params['page_number'] ?? ($params['number'] ?? null);

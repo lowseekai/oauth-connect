@@ -8,6 +8,7 @@ use Lowseekai\OAuthConnect\Models\AccessToken;
 use Lowseekai\OAuthConnect\Models\RefreshToken;
 use Lowseekai\OAuthConnect\Support\RequestData;
 use Lowseekai\OAuthConnect\Support\Translation;
+use Lowseekai\OAuthConnect\Support\AuthorizationCenterAccess;
 use Laminas\Diactoros\Response\JsonResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -26,7 +27,7 @@ class RevokeTokenController implements RequestHandlerInterface
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        RequestUtil::getActor($request)->assertAdmin();
+        AuthorizationCenterAccess::assert(RequestUtil::getActor($request), 'oauthConnect.manageAuthorizations');
 
         $body = $this->data->all($request);
         $token = (string) ($body['token'] ?? '');

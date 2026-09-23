@@ -6,6 +6,7 @@ use Flarum\Http\RequestUtil;
 use InvalidArgumentException;
 use Lowseekai\OAuthConnect\Repositories\ClientRepository;
 use Lowseekai\OAuthConnect\Support\RequestData;
+use Lowseekai\OAuthConnect\Support\AuthorizationCenterAccess;
 use Laminas\Diactoros\Response\JsonResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -26,7 +27,7 @@ class CreateClientController implements RequestHandlerInterface
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        RequestUtil::getActor($request)->assertAdmin();
+        AuthorizationCenterAccess::assert(RequestUtil::getActor($request), 'oauthConnect.manageClients');
 
         try {
             [$client, $secret] = $this->clients->create($this->data->all($request));

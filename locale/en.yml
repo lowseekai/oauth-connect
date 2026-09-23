@@ -118,6 +118,13 @@ lowseekai-oauth-connect:
       invalid_url: "Invalid URL: {url}"
       revoke_authorization_required: client_id and user_id are required.
       token_required: token is required.
+      application_name_required: Application name is required.
+      application_description_required: Application description is required.
+      review_note_required: A review reason is required.
+      application_not_pending: This application is no longer pending.
+      application_duplicate: An application with the same name and redirect URI already exists.
+      application_redirect_uri_invalid: "Invalid application redirect URI: {uri}"
+      application_homepage_invalid: Application homepage must be a valid HTTPS URL.
     user_fallback: "User #{id}"
     scopes:
       openid: OpenID Connect sign-in
@@ -130,7 +137,89 @@ lowseekai-oauth-connect:
       user_trust: Trust level
     access_policy:
       enabled_badge: Access policy enabled
+    permissions:
+      submit_application: Submit OAuth application requests
+      manage_applications: Review OAuth application requests
+      manage_clients: Manage all OAuth clients
+      view_audit_log: View OAuth audit log
+      manage_authorizations: Manage OAuth authorizations and tokens
+    applications:
+      title: OAuth application approvals
+      description: Review user applications before issuing OAuth credentials.
+      pending: Pending
+      approved: Approved
+      rejected: Rejected
+      withdrawn: Withdrawn
+      cancelled: Cancelled
+      approve: Approve
+      reject: Reject
+      review: Review
+      view: View
+      reopen: Reopen
+      cancel: Cancel
+      view: View
+      reopen: Reopen
+      cancel: Cancel
+      none: No applications match the current filters.
+      search_placeholder: Application or username
+      confirm_approve: Approve this application and create a client?
+      reject_reason: Enter a rejection reason:
+      secret_notice: 'Client Secret: '
+      open: Review applications
+      audit_logs: Audit log
+      detail: Application details
+      created_at: Submitted
+      requested_scopes: Requested scopes
+      review_note: Review note
+      audit_history: Application history
+      no_history: No history yet.
+      confirm_reject: Confirm rejection
+      confirm_cancel: Cancel this application?
+      confirm_reopen: Reopen this application for review?
+      approval_options: Approval options
+      approved_scopes: Approved scopes
+      back_to_applications: Applications
+    audit:
+      title: OAuth audit log
+      description: Review authorization center operations.
+      time: Time
+      action: Action
+      target: Target
+      actor: Actor
   forum:
+    title: Authorization center
+    description: Manage applications that connect to your forum account.
+    nav: Authorization center
+    new_application: Apply for application access
+    cancel: Cancel
+    my_applications: My applications
+    my_clients: My clients
+    no_clients: No approved clients yet.
+    enabled: Enabled
+    disabled: Disabled
+    enable: Enable
+    disable: Disable
+    reset_secret: Reset secret
+    confirm_reset_secret: Reset this secret and revoke existing tokens?
+    no_applications: You have not submitted an application yet.
+    loading: Loading...
+    submitting: Submitting...
+    submit: Submit application
+    view_credentials: View credentials
+    client_id: "Client ID: "
+    client_secret: "Client Secret: "
+    secret_unavailable: The Client Secret has already been viewed. Reset it if you no longer have it.
+    withdraw: Withdraw
+    confirm_withdraw: Withdraw this application?
+    request_failed: Request failed.
+    form:
+      title: New application
+      name: Application name
+      description: Description
+      homepage_url: Homepage URL
+      application_note: Application note
+      redirect_uris: Redirect URIs
+      redirect_help: Use one exact HTTPS redirect URI per line.
     page_title:
       login_required: Login required
       invalid_request: Invalid OAuth request

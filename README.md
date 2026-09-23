@@ -17,7 +17,7 @@ Not included in this version:
 - Implicit grant
 - Password grant
 - Client credentials grant
-- Dynamic client registration
+- Dynamic client registration is available through the Authorization Center after administrator approval.
 
 ## Endpoints
 
@@ -77,7 +77,11 @@ After enabling the extension, open the Flarum admin panel and go to the OAuth Co
 - revoke client authorizations
 - delete clients
 
+Registered users can open the forum's Authorization Center to submit an application. Administrators can review, approve, or reject applications from the dedicated review page. Existing administrator-created clients remain approved and keep their original credentials and redirect URIs.
+
 Client secrets are stored with `password_hash()` and only shown once when created or reset.
+
+The authorization center also uses a dedicated Sodium key to temporarily encrypt a newly approved client's one-time Secret before it is claimed. Configure a stable Base64-encoded 32-byte value as `oauth_connect.secret_key` in the Flarum `config.php` (or the equivalent protected runtime configuration) before approving applications. Keep this key backed up and do not rotate it casually: changing it makes any unclaimed one-time Secrets undecipherable. Existing client Secret hashes are not affected by this key.
 
 ## Installation
 
