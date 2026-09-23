@@ -246,7 +246,14 @@ import Notification from 'flarum/forum/components/Notification';
     var self = this;
     var params = { limit: 50, page: self.directoryPage };
     if (self.directoryStatus !== 'all') params.status = self.directoryStatus;
-    app.request({ method: 'GET', url: api('/admin/directory'), params: params, background: true }).then(function (response) {
+    var query = new URLSearchParams(params).toString();
+    window.fetch(api('/admin/directory') + '?' + query, {
+      credentials: 'same-origin',
+      headers: { Accept: 'application/json' },
+    }).then(function (response) {
+      if (!response.ok) throw new Error('directory_unavailable');
+      return response.json();
+    }).then(function (response) {
       self.directory = response.data || [];
       self.directoryPages = response.meta && response.meta.total_pages ? response.meta.total_pages : 1;
       self.directoryTotal = response.meta && response.meta.total ? response.meta.total : 0;
