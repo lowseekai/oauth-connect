@@ -11,6 +11,7 @@ use Lowseekai\OAuthConnect\Controllers\DeleteClientController;
 use Lowseekai\OAuthConnect\Controllers\JwksController;
 use Lowseekai\OAuthConnect\Controllers\ListAuthorizationsController;
 use Lowseekai\OAuthConnect\Controllers\ListAdminApplicationsController;
+use Lowseekai\OAuthConnect\Controllers\ListApplicationDirectoryController;
 use Lowseekai\OAuthConnect\Controllers\ListAuditLogsController;
 use Lowseekai\OAuthConnect\Controllers\ListClientsController;
 use Lowseekai\OAuthConnect\Controllers\ListMyApplicationsController;
@@ -30,9 +31,12 @@ use Lowseekai\OAuthConnect\Controllers\UpdateClientController;
 use Lowseekai\OAuthConnect\Controllers\UserInfoController;
 use Lowseekai\OAuthConnect\Controllers\WithdrawApplicationController;
 use Lowseekai\OAuthConnect\Middlewares\OAuthBearerMiddleware;
+use Lowseekai\OAuthConnect\Notifications\ApplicationReviewedNotification;
+use Lowseekai\OAuthConnect\Notifications\ApplicationSubmittedNotification;
 
 return [
     new Extend\Locales(__DIR__.'/locale'),
+    (new Extend\View())->namespace('lowseekai-oauth-connect', __DIR__.'/views'),
 
     (new Extend\Frontend('admin'))
         ->js(__DIR__.'/js/dist/admin.js')
@@ -66,6 +70,7 @@ return [
         ->post('/oauth-connect/my-clients/{clientId}/reset-secret', 'oauth-connect.my-clients.reset-secret', ResetMyClientSecretController::class)
         ->post('/oauth-connect/my-clients/{clientId}/toggle', 'oauth-connect.my-clients.toggle', ToggleMyClientController::class)
         ->get('/oauth-connect/admin/applications', 'oauth-connect.admin.applications.index', ListAdminApplicationsController::class)
+        ->get('/oauth-connect/admin/directory', 'oauth-connect.admin.directory', ListApplicationDirectoryController::class)
         ->get('/oauth-connect/admin/applications/{applicationId}', 'oauth-connect.admin.applications.show', ShowAdminApplicationController::class)
         ->post('/oauth-connect/admin/applications/{applicationId}/approve', 'oauth-connect.admin.applications.approve', ApproveApplicationController::class)
         ->post('/oauth-connect/admin/applications/{applicationId}/reject', 'oauth-connect.admin.applications.reject', RejectApplicationController::class)
@@ -81,6 +86,10 @@ return [
 
     (new Extend\Middleware('api'))
         ->insertAfter('flarum.api.route_resolver', OAuthBearerMiddleware::class),
+
+    (new Extend\Notification())
+        ->type(ApplicationSubmittedNotification::class, ['alert', 'email'])
+        ->type(ApplicationReviewedNotification::class, ['alert', 'email']),
 
     (new Extend\Settings())
         ->default('iseekup.oauth-connect.access_token_lifetime', '7200')

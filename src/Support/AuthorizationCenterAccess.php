@@ -16,4 +16,14 @@ class AuthorizationCenterAccess
     {
         $actor->assertPermission($actor->isAdmin() || $actor->hasPermission($permission));
     }
+
+    public static function canManageApplications(User $actor): bool
+    {
+        return $actor->isAdmin() || $actor->hasPermission('oauthConnect.manageApplications');
+    }
+
+    public static function assertCanManageApplications(User $actor): void
+    {
+        $actor->assertPermission(self::canManageApplications($actor));
+    }
 }

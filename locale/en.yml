@@ -1,4 +1,11 @@
 lowseekai-oauth-connect:
+  email:
+    application_submitted_subject: New OAuth application for review
+    application_submitted_title: New application for review
+    application_submitted_body: '{application} has submitted an OAuth application.'
+    application_reviewed_subject: OAuth application reviewed
+    application_reviewed_title: Application review complete
+    application_reviewed_body: 'Your application {application} was {status}.'
   admin:
     title: OAuth Connect
     metadata_title: OAuth Connect
@@ -220,6 +227,18 @@ lowseekai-oauth-connect:
     withdraw: Withdraw
     confirm_withdraw: Withdraw this application?
     request_failed: Request failed.
+    directory:
+      title: Connected applications
+      all: All
+      empty: No applications in this view.
+      previous: Previous
+      page: 'Page {page} of {pages}'
+      next: Next
+    notification:
+      submitted: 'New OAuth application: {application}'
+      reviewed: '{application} application {status}.'
+      submitted_setting: New OAuth applications
+      reviewed_setting: OAuth application reviews
     form:
       title: New application
       name: Application name

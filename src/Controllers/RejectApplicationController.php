@@ -8,6 +8,7 @@ use Lowseekai\OAuthConnect\Repositories\ApplicationRepository;
 use Lowseekai\OAuthConnect\Repositories\AuditRepository;
 use Lowseekai\OAuthConnect\Support\AuthorizationCenterAccess;
 use Lowseekai\OAuthConnect\Support\RequestData;
+use Lowseekai\OAuthConnect\Support\ApplicationNotifier;
 use Laminas\Diactoros\Response\JsonResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -18,7 +19,8 @@ class RejectApplicationController implements RequestHandlerInterface
     public function __construct(
         private ApplicationRepository $applications,
         private AuditRepository $audit,
-        private RequestData $data
+        private RequestData $data,
+        private ApplicationNotifier $notifier
     ) {
     }
 
@@ -44,6 +46,7 @@ class RejectApplicationController implements RequestHandlerInterface
             'status' => 'rejected',
             'review_note' => $application->review_note,
         ], $request);
+        $this->notifier->reviewed($application, $actor);
 
         return new JsonResponse(['data' => $this->applications->serialize($application)]);
     }

@@ -9,6 +9,7 @@ use Lowseekai\OAuthConnect\Repositories\AuditRepository;
 use Lowseekai\OAuthConnect\Repositories\ClientRepository;
 use Lowseekai\OAuthConnect\Support\AuthorizationCenterAccess;
 use Lowseekai\OAuthConnect\Support\RequestData;
+use Lowseekai\OAuthConnect\Support\ApplicationNotifier;
 use Laminas\Diactoros\Response\JsonResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -20,7 +21,8 @@ class ApproveApplicationController implements RequestHandlerInterface
         private ApplicationRepository $applications,
         private ClientRepository $clients,
         private AuditRepository $audit,
-        private RequestData $data
+        private RequestData $data,
+        private ApplicationNotifier $notifier
     ) {
     }
 
@@ -44,6 +46,7 @@ class ApproveApplicationController implements RequestHandlerInterface
             'status' => 'approved',
             'client_id' => $client->client_id,
         ], $request);
+        $this->notifier->reviewed($application, $actor);
 
         return new JsonResponse([
             'data' => [

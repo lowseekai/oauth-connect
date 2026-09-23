@@ -4,6 +4,7 @@ import LinkButton from 'flarum/common/components/LinkButton';
 import Page from 'flarum/common/components/Page';
 import PageStructure from 'flarum/forum/components/PageStructure';
 import IndexSidebar from 'flarum/forum/components/IndexSidebar';
+import Notification from 'flarum/forum/components/Notification';
 
 (function () {
   'use strict';
@@ -39,6 +40,12 @@ import IndexSidebar from 'flarum/forum/components/IndexSidebar';
       this.error = null;
       this.applications = [];
       this.clients = [];
+      this.directory = [];
+      this.directoryAvailable = false;
+      this.directoryStatus = 'all';
+      this.directoryPage = 1;
+      this.directoryPages = 1;
+      this.directoryTotal = 0;
       this.showForm = false;
       this.form = { name: '', description: '', homepage_url: '', redirect_uris: '', scopes: ['user.read'], application_note: '' };
       this.load();
@@ -77,6 +84,7 @@ import IndexSidebar from 'flarum/forum/components/IndexSidebar';
       self.clients = responses[1].data || [];
       self.loading = false;
       m.redraw();
+      self.loadDirectory();
     }, function (error) {
       self.error = errorMessage(error);
       self.loading = false;
@@ -131,6 +139,7 @@ import IndexSidebar from 'flarum/forum/components/IndexSidebar';
           m('.OAuthConnectSectionHeading', [m('h3', t('my_clients', {}, 'My clients')), m('span', self.loading ? '' : self.clients.length)]),
           self.loading ? null : self.clientList(),
         ]),
+        self.directoryAvailable ? self.directoryView() : null,
       ])
     );
   };
@@ -205,6 +214,51 @@ import IndexSidebar from 'flarum/forum/components/IndexSidebar';
     }));
   };
 
+  AuthorizationCenterPage.prototype.directoryView = function () {
+    var self = this;
+    var items = self.directory;
+
+    return m('.OAuthConnectSection.OAuthConnectDirectory', [
+      m('.OAuthConnectSectionHeading', [m('h3', t('directory.title', {}, 'Connected applications')), m('span', self.directoryTotal)]),
+      m('.OAuthConnectDirectoryFilters', [
+        m('button.Button', { type: 'button', className: self.directoryStatus === 'all' ? 'active' : '', onclick: function () { self.directoryStatus = 'all'; self.directoryPage = 1; self.loadDirectory(); } }, t('directory.all', {}, 'All')),
+        m('button.Button', { type: 'button', className: self.directoryStatus === 'pending' ? 'active' : '', onclick: function () { self.directoryStatus = 'pending'; self.directoryPage = 1; self.loadDirectory(); } }, statusLabel('pending')),
+        m('button.Button', { type: 'button', className: self.directoryStatus === 'approved' ? 'active' : '', onclick: function () { self.directoryStatus = 'approved'; self.directoryPage = 1; self.loadDirectory(); } }, statusLabel('approved')),
+      ]),
+      items.length ? m('.OAuthConnectPanel', items.map(function (application) {
+        return m('.OAuthConnectApplicationItem', [
+          m('.OAuthConnectApplicationMain', [
+            m('.OAuthConnectApplicationIdentity', [m('strong', application.name), m('span.OAuthConnectStatus', { className: 'OAuthConnectStatus--' + application.status }, statusLabel(application.status))]),
+            m('p.helpText', application.description),
+            m('.OAuthConnectApplicationMeta', [application.username ? m('span', application.username) : null, application.created_at ? m('span', date(application.created_at)) : null, application.homepage_url ? m('a', { href: application.homepage_url, target: '_blank', rel: 'noopener noreferrer' }, application.homepage_url) : null]),
+          ]),
+        ]);
+      })) : m('p.helpText', t('directory.empty', {}, 'No applications in this view.')),
+      self.directoryPages > 1 ? m('.OAuthConnectDirectoryPagination', [
+        m('button.Button', { type: 'button', disabled: self.directoryPage <= 1, onclick: function () { self.directoryPage--; self.loadDirectory(); } }, t('directory.previous', {}, 'Previous')),
+        m('span', t('directory.page', { page: self.directoryPage, pages: self.directoryPages }, 'Page {page} of {pages}')),
+        m('button.Button', { type: 'button', disabled: self.directoryPage >= self.directoryPages, onclick: function () { self.directoryPage++; self.loadDirectory(); } }, t('directory.next', {}, 'Next')),
+      ]) : null,
+    ]);
+  };
+
+  AuthorizationCenterPage.prototype.loadDirectory = function () {
+    var self = this;
+    var params = { limit: 50, page: self.directoryPage };
+    if (self.directoryStatus !== 'all') params.status = self.directoryStatus;
+    app.request({ method: 'GET', url: api('/admin/directory'), params: params }).then(function (response) {
+      self.directory = response.data || [];
+      self.directoryPages = response.meta && response.meta.total_pages ? response.meta.total_pages : 1;
+      self.directoryTotal = response.meta && response.meta.total ? response.meta.total : 0;
+      self.directoryAvailable = true;
+      m.redraw();
+    }, function () {
+      self.directory = [];
+      self.directoryAvailable = false;
+      m.redraw();
+    });
+  };
+
   AuthorizationCenterPage.prototype.toggleClient = function (client) {
     var self = this;
     app.request({ method: 'POST', url: api('/my-clients/' + encodeURIComponent(client.client_id) + '/toggle'), body: { enabled: !client.is_enabled } }).then(function () { return self.load(); }, function (error) { self.error = errorMessage(error); m.redraw(); });
@@ -227,6 +281,23 @@ import IndexSidebar from 'flarum/forum/components/IndexSidebar';
 
   app.initializers.add('lowseekai/oauth-connect-forum', function () {
     app.routes.oauthConnect = { path: '/oauth-connect', component: AuthorizationCenterPage };
+    app.notificationComponents.oauthApplicationSubmitted = class extends Notification {
+      icon() { return 'fas fa-key'; }
+      href() { return app.route('oauthConnect'); }
+      content() { return t('notification.submitted', { application: this.attrs.notification.content().applicationName }, 'New OAuth application: {application}'); }
+    };
+    app.notificationComponents.oauthApplicationReviewed = class extends Notification {
+      icon() { return 'fas fa-gavel'; }
+      href() { return app.route('oauthConnect'); }
+      content() {
+        var data = this.attrs.notification.content() || {};
+        return t('notification.reviewed', { application: data.applicationName, status: statusLabel(data.status) }, '{application} application {status}.');
+      }
+    };
+    extend('flarum/forum/components/NotificationGrid', 'notificationTypes', function (items) {
+      items.add('oauthApplicationSubmitted', { name: 'oauthApplicationSubmitted', icon: 'fas fa-key', label: t('notification.submitted_setting', {}, 'New OAuth applications') });
+      items.add('oauthApplicationReviewed', { name: 'oauthApplicationReviewed', icon: 'fas fa-gavel', label: t('notification.reviewed_setting', {}, 'OAuth application reviews') });
+    });
 
     if (extend && LinkButton) {
       extend('flarum/forum/components/IndexSidebar', 'navItems', function (items) {

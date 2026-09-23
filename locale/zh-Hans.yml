@@ -1,4 +1,11 @@
 lowseekai-oauth-connect:
+  email:
+    application_submitted_subject: 有新的 OAuth 应用等待审核
+    application_submitted_title: 新的应用接入申请
+    application_submitted_body: 应用“{application}”已提交 OAuth 接入申请。
+    application_reviewed_subject: OAuth 应用审核结果
+    application_reviewed_title: 应用审核完成
+    application_reviewed_body: 你的应用“{application}”已{status}。
   admin:
     title: OAuth 授权中心
     metadata_title: OAuth 授权中心
@@ -219,6 +226,18 @@ lowseekai-oauth-connect:
     withdraw: 撤回
     confirm_withdraw: 确定撤回该申请吗？
     request_failed: 请求失败。
+    directory:
+      title: 已接入应用
+      all: 全部
+      empty: 当前筛选下暂无应用。
+      previous: 上一页
+      page: 第 {page} / {pages} 页
+      next: 下一页
+    notification:
+      submitted: 新的 OAuth 应用申请：{application}
+      reviewed: 应用“{application}”已{status}。
+      submitted_setting: 新 OAuth 应用申请
+      reviewed_setting: OAuth 应用审核结果
     form:
       title: 新建应用申请
       name: 应用名称

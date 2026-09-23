@@ -8,6 +8,7 @@ use Lowseekai\OAuthConnect\Repositories\ApplicationRepository;
 use Lowseekai\OAuthConnect\Repositories\AuditRepository;
 use Lowseekai\OAuthConnect\Support\RequestData;
 use Lowseekai\OAuthConnect\Support\AuthorizationCenterAccess;
+use Lowseekai\OAuthConnect\Support\ApplicationNotifier;
 use Laminas\Diactoros\Response\JsonResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -18,7 +19,8 @@ class CreateApplicationController implements RequestHandlerInterface
     public function __construct(
         private ApplicationRepository $applications,
         private AuditRepository $audit,
-        private RequestData $data
+        private RequestData $data,
+        private ApplicationNotifier $notifier
     ) {
     }
 
@@ -37,6 +39,7 @@ class CreateApplicationController implements RequestHandlerInterface
             'status' => $application->status,
             'name' => $application->name,
         ], $request);
+        $this->notifier->submitted($application);
 
         return new JsonResponse(['data' => $this->applications->serialize($application)], 201);
     }

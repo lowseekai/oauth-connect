@@ -310,7 +310,7 @@
 }
 
 .OAuthConnectForumPage {
-  max-width: 900px;
+  width: 100%;
 
   .OAuthConnectPageTitle {
     display: flex;
@@ -386,6 +386,17 @@
   .OAuthConnectSectionHeading h3 {
     margin: 0;
     font-size: 16px;
+  }
+
+  .OAuthConnectDirectoryFilters {
+    display: flex;
+    gap: 8px;
+    margin: 12px 0;
+  }
+
+  .OAuthConnectDirectoryFilters .Button.active {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
   }
 
   .OAuthConnectApplicationItem {
