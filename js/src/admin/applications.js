@@ -1,4 +1,5 @@
 import app from 'flarum/admin/app';
+import Page from 'flarum/common/components/Page';
 
 (function () {
   'use strict';
@@ -18,9 +19,10 @@ import app from 'flarum/admin/app';
   }
   function date(value) { if (!value) return '-'; try { return new Date(value).toLocaleString(); } catch (error) { return value; } }
 
-  function ApplicationsPage() {}
+  class ApplicationsPage extends Page {}
 
-  ApplicationsPage.prototype.oninit = function () {
+  ApplicationsPage.prototype.oninit = function (vnode) {
+    Page.prototype.oninit.call(this, vnode);
     this.applications = [];
     this.loading = true;
     this.error = null;
@@ -154,8 +156,8 @@ import app from 'flarum/admin/app';
     ]);
   };
 
-  function AuditLogsPage() {}
-  AuditLogsPage.prototype.oninit = function () { this.loading = true; this.logs = []; this.error = null; this.load(); };
+  class AuditLogsPage extends Page {}
+  AuditLogsPage.prototype.oninit = function (vnode) { Page.prototype.oninit.call(this, vnode); this.loading = true; this.logs = []; this.error = null; this.load(); };
   AuditLogsPage.prototype.load = function () { var self = this; return app.request({ method: 'GET', url: api('/admin/audit-logs'), params: { limit: 50 } }).then(function (response) { self.logs = response.data || []; self.loading = false; m.redraw(); }, function (error) { self.error = errorMessage(error); self.loading = false; m.redraw(); }); };
   AuditLogsPage.prototype.view = function () { var self = this; return m('.OAuthConnectPage', m('.container', [m('.OAuthConnectPageTitle', [m('div', [m('h2', t('audit.title', {}, 'OAuth audit log')), m('p.helpText', t('audit.description', {}, 'Review authorization center operations.'))]), m('a.Button', { href: app.route('oauthConnectApplications') }, t('applications.back_to_applications', {}, 'Applications'))]), self.error ? m('.Alert.Alert--error', self.error) : null, self.loading ? m('p.OAuthConnectLoading', t('loading', {}, 'Loading...')) : m('.OAuthConnectTableWrap', m('table.OAuthConnectTable', [m('thead', m('tr', [m('th', t('audit.time', {}, 'Time')), m('th', t('audit.action', {}, 'Action')), m('th', t('audit.target', {}, 'Target')), m('th', t('audit.actor', {}, 'Actor'))])), m('tbody', self.logs.map(function (log) { return m('tr', [m('td', date(log.created_at)), m('td', log.action), m('td', log.target_type + ' #' + log.target_id), m('td', log.actor_username || ('#' + log.actor_user_id))]); }))]))])); };
 

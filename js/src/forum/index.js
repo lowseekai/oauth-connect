@@ -1,6 +1,7 @@
 import app from 'flarum/forum/app';
 import { extend } from 'flarum/common/extend';
 import LinkButton from 'flarum/common/components/LinkButton';
+import Page from 'flarum/common/components/Page';
 
 (function () {
   'use strict';
@@ -26,18 +27,19 @@ import LinkButton from 'flarum/common/components/LinkButton';
     return error && error.errors && error.errors[0] && error.errors[0].detail ? error.errors[0].detail : (error && error.error) || t('request_failed', {}, 'Request failed.');
   }
 
-  function AuthorizationCenterPage() {}
-
-  AuthorizationCenterPage.prototype.oninit = function () {
-    this.loading = true;
-    this.submitting = false;
-    this.error = null;
-    this.applications = [];
-    this.clients = [];
-    this.showForm = false;
-    this.form = { name: '', description: '', homepage_url: '', redirect_uris: '', scopes: ['user.read'], application_note: '' };
-    this.load();
-  };
+  class AuthorizationCenterPage extends Page {
+    oninit(vnode) {
+      super.oninit(vnode);
+      this.loading = true;
+      this.submitting = false;
+      this.error = null;
+      this.applications = [];
+      this.clients = [];
+      this.showForm = false;
+      this.form = { name: '', description: '', homepage_url: '', redirect_uris: '', scopes: ['user.read'], application_note: '' };
+      this.load();
+    }
+  }
 
   AuthorizationCenterPage.prototype.load = function () {
     var self = this;

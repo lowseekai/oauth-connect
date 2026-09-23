@@ -1,5 +1,6 @@
 import app from 'flarum/admin/app';
 import LoadingIndicator from 'flarum/common/components/LoadingIndicator';
+import Page from 'flarum/common/components/Page';
 import setRouteWithForcedRefresh from 'flarum/common/utils/setRouteWithForcedRefresh';
 
 (function () {
@@ -962,9 +963,10 @@ import setRouteWithForcedRefresh from 'flarum/common/utils/setRouteWithForcedRef
     });
   };
 
-  function OAuthConnectClientsPage() {}
+  class OAuthConnectClientsPage extends Page {}
 
-  OAuthConnectClientsPage.prototype.oninit = function () {
+  OAuthConnectClientsPage.prototype.oninit = function (vnode) {
+    Page.prototype.oninit.call(this, vnode);
     this.loading = true;
     this.loadingClients = true;
     this.saving = false;
@@ -1200,9 +1202,10 @@ import setRouteWithForcedRefresh from 'flarum/common/utils/setRouteWithForcedRef
     OAuthConnectClientsPage.prototype[method] = OAuthConnectSettings.prototype[method];
   });
 
-  function OAuthConnectAuthorizationsPage() {}
+  class OAuthConnectAuthorizationsPage extends Page {}
 
-  OAuthConnectAuthorizationsPage.prototype.oninit = function () {
+  OAuthConnectAuthorizationsPage.prototype.oninit = function (vnode) {
+    Page.prototype.oninit.call(this, vnode);
     this.loading = true;
     this.loadingAuthorizations = true;
     this.clients = [];
