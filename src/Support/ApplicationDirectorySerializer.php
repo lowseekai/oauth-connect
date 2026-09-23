@@ -15,8 +15,13 @@ class ApplicationDirectorySerializer
             'homepage_url' => $application->homepage_url,
             'username' => $application->user?->username,
             'status' => $application->status,
-            'created_at' => $application->created_at?->toIso8601String(),
-            'reviewed_at' => $application->reviewed_at?->toIso8601String(),
+            'created_at' => $this->date($application->created_at),
+            'reviewed_at' => $this->date($application->reviewed_at),
         ];
+    }
+
+    private function date($value): ?string
+    {
+        return $value instanceof \DateTimeInterface ? $value->format(DATE_ATOM) : ($value ?: null);
     }
 }
