@@ -292,6 +292,7 @@ import Notification from 'flarum/forum/components/Notification';
       icon() { return 'fas fa-key'; }
       href() { return app.route('oauthConnect'); }
       content() { return t('notification.submitted', { application: this.attrs.notification.content().applicationName }, 'New OAuth application: {application}'); }
+      excerpt() { return this.content(); }
     };
     app.notificationComponents.oauthApplicationReviewed = class extends Notification {
       icon() { return 'fas fa-gavel'; }
@@ -300,6 +301,7 @@ import Notification from 'flarum/forum/components/Notification';
         var data = this.attrs.notification.content() || {};
         return t('notification.reviewed', { application: data.applicationName, status: statusLabel(data.status) }, '{application} application {status}.');
       }
+      excerpt() { return this.content(); }
     };
     extend('flarum/forum/components/NotificationGrid', 'notificationTypes', function (items) {
       items.add('oauthApplicationSubmitted', { name: 'oauthApplicationSubmitted', icon: 'fas fa-key', label: t('notification.submitted_setting', {}, 'New OAuth applications') });
