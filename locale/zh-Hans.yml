@@ -198,6 +198,17 @@ lowseekai-oauth-connect:
     reset_secret: 重置密钥
     confirm_reset_secret: 确定重置密钥并撤销现有令牌吗？
     no_applications: 你还没有提交应用申请。
+    eyebrow: 开发者接入
+    overview:
+      applications: 应用申请
+      pending: 审核中
+      approved: 已通过
+    status:
+      pending: 审核中
+      approved: 已通过
+      rejected: 未通过
+      withdrawn: 已撤回
+      cancelled: 已取消
     loading: 加载中...
     submitting: 提交中...
     submit: 提交申请
@@ -212,6 +223,7 @@ lowseekai-oauth-connect:
       title: 新建应用申请
       name: 应用名称
       description: 应用介绍
+      description_help: 填写应用信息和精确的回调地址。
       homepage_url: 应用主页
       application_note: 申请说明
       redirect_uris: 回调地址

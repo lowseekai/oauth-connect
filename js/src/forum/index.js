@@ -2,6 +2,8 @@ import app from 'flarum/forum/app';
 import { extend } from 'flarum/common/extend';
 import LinkButton from 'flarum/common/components/LinkButton';
 import Page from 'flarum/common/components/Page';
+import PageStructure from 'flarum/forum/components/PageStructure';
+import IndexSidebar from 'flarum/forum/components/IndexSidebar';
 
 (function () {
   'use strict';
@@ -28,6 +30,8 @@ import Page from 'flarum/common/components/Page';
   }
 
   class AuthorizationCenterPage extends Page {
+    bodyClass = 'App--index';
+
     oninit(vnode) {
       super.oninit(vnode);
       this.loading = true;
@@ -38,6 +42,28 @@ import Page from 'flarum/common/components/Page';
       this.showForm = false;
       this.form = { name: '', description: '', homepage_url: '', redirect_uris: '', scopes: ['user.read'], application_note: '' };
       this.load();
+    }
+  }
+
+  function statusLabel(status) {
+    var labels = {
+      pending: t('status.pending', {}, 'Under review'),
+      approved: t('status.approved', {}, 'Approved'),
+      rejected: t('status.rejected', {}, 'Rejected'),
+      withdrawn: t('status.withdrawn', {}, 'Withdrawn'),
+      cancelled: t('status.cancelled', {}, 'Cancelled'),
+    };
+
+    return labels[status] || status;
+  }
+
+  function date(value) {
+    if (!value) return '';
+
+    try {
+      return new Date(value).toLocaleDateString();
+    } catch (error) {
+      return value;
     }
   }
 
@@ -77,21 +103,42 @@ import Page from 'flarum/common/components/Page';
 
   AuthorizationCenterPage.prototype.view = function () {
     var self = this;
-    return m('.OAuthConnectForumPage', m('.container', [
-      m('.OAuthConnectPageTitle', [m('div', [m('h2', t('title', {}, 'Authorization center')), m('p.helpText', t('description', {}, 'Manage applications that connect to your forum account.'))]), m('button.Button.Button--primary', { type: 'button', onclick: function () { self.showForm = !self.showForm; } }, self.showForm ? t('cancel', {}, 'Cancel') : t('new_application', {}, 'Apply for application access'))]),
-      self.error ? m('.ValidationErrors', self.error) : null,
-      self.showForm ? self.formView() : null,
-      m('h3', t('my_applications', {}, 'My applications')),
-      self.loading ? m('p', t('loading', {}, 'Loading...')) : self.applicationList(),
-      m('h3', t('my_clients', {}, 'My clients')),
-      self.loading ? null : self.clientList(),
-    ]));
+    var pendingCount = self.applications.filter(function (application) { return application.status === 'pending'; }).length;
+    var approvedCount = self.applications.filter(function (application) { return application.status === 'approved'; }).length;
+
+    return m(PageStructure, { className: 'IndexPage', sidebar: function () { return m(IndexSidebar); } },
+      m('.OAuthConnectForumPage', [
+        m('.OAuthConnectPageTitle', [
+          m('div', [
+            m('span.OAuthConnectEyebrow', t('eyebrow', {}, 'DEVELOPER ACCESS')),
+            m('h2', t('title', {}, 'Authorization center')),
+            m('p.helpText', t('description', {}, 'Manage applications that connect to your forum account.')),
+          ]),
+          m('button.Button.Button--primary', { type: 'button', onclick: function () { self.showForm = !self.showForm; } }, self.showForm ? t('cancel', {}, 'Cancel') : t('new_application', {}, 'Apply for application access')),
+        ]),
+        m('.OAuthConnectOverview', [
+          m('.OAuthConnectOverviewItem', [m('strong', self.loading ? '-' : self.applications.length), m('span', t('overview.applications', {}, 'Applications'))]),
+          m('.OAuthConnectOverviewItem', [m('strong', self.loading ? '-' : pendingCount), m('span', t('overview.pending', {}, 'Under review'))]),
+          m('.OAuthConnectOverviewItem', [m('strong', self.loading ? '-' : approvedCount), m('span', t('overview.approved', {}, 'Approved'))]),
+        ]),
+        self.error ? m('.ValidationErrors', self.error) : null,
+        self.showForm ? self.formView() : null,
+        m('.OAuthConnectSection', [
+          m('.OAuthConnectSectionHeading', [m('h3', t('my_applications', {}, 'My applications')), m('span', self.loading ? '' : self.applications.length)]),
+          self.loading ? m('p.helpText', t('loading', {}, 'Loading...')) : self.applicationList(),
+        ]),
+        m('.OAuthConnectSection', [
+          m('.OAuthConnectSectionHeading', [m('h3', t('my_clients', {}, 'My clients')), m('span', self.loading ? '' : self.clients.length)]),
+          self.loading ? null : self.clientList(),
+        ]),
+      ])
+    );
   };
 
   AuthorizationCenterPage.prototype.formView = function () {
     var self = this;
-    return m('form.OAuthConnectPanel.OAuthConnectForm', { onsubmit: self.submit.bind(self) }, [
-      m('h3', t('form.title', {}, 'New application')),
+    return m('form.OAuthConnectForm', { onsubmit: self.submit.bind(self) }, [
+      m('.OAuthConnectFormHeading', [m('h3', t('form.title', {}, 'New application')), m('p.helpText', t('form.description_help', {}, 'Add your app details and exact callback URL.'))]),
       m('label', [m('span', t('form.name', {}, 'Application name')), m('input.FormControl', { required: true, maxlength: 120, value: self.form.name, oninput: function (event) { self.form.name = event.target.value; } })]),
       m('label', [m('span', t('form.description', {}, 'Description')), m('textarea.FormControl', { required: true, maxlength: 2000, rows: 4, value: self.form.description, oninput: function (event) { self.form.description = event.target.value; } })]),
       m('.OAuthConnectFormGrid', [
@@ -107,7 +154,18 @@ import Page from 'flarum/common/components/Page';
     var self = this;
     if (!self.applications.length) return m('p.helpText', t('no_applications', {}, 'You have not submitted an application yet.'));
     return m('.OAuthConnectPanel', self.applications.map(function (application) {
-      return m('.OAuthConnectApplicationItem', [m('div', [m('strong', application.name), m('p.helpText', application.description), m('span.OAuthConnectStatus', application.status)]), m('.OAuthConnectActions', [application.status === 'approved' ? m('button.Button', { type: 'button', onclick: function () { self.viewApplication(application); } }, t('view_credentials', {}, 'View credentials')) : null, application.status === 'pending' ? m('button.Button.Button--danger', { type: 'button', onclick: function () { self.withdraw(application); } }, t('withdraw', {}, 'Withdraw')) : null])]);
+      return m('.OAuthConnectApplicationItem', [
+        m('.OAuthConnectApplicationMain', [
+          m('.OAuthConnectApplicationIdentity', [m('strong', application.name), m('span.OAuthConnectStatus', { className: 'OAuthConnectStatus--' + application.status }, statusLabel(application.status))]),
+          m('p.helpText', application.description),
+          m('.OAuthConnectApplicationMeta', [application.created_at ? m('span', date(application.created_at)) : null, application.homepage_url ? m('a', { href: application.homepage_url, target: '_blank', rel: 'noopener noreferrer' }, application.homepage_url) : null]),
+          application.review_note ? m('p.OAuthConnectReviewNote', application.review_note) : null,
+        ]),
+        m('.OAuthConnectActions', [
+          application.status === 'approved' ? m('button.Button', { type: 'button', onclick: function () { self.viewApplication(application); } }, t('view_credentials', {}, 'View credentials')) : null,
+          application.status === 'pending' ? m('button.Button', { type: 'button', onclick: function () { self.withdraw(application); } }, t('withdraw', {}, 'Withdraw')) : null,
+        ]),
+      ]);
     }));
   };
 
@@ -138,7 +196,7 @@ import Page from 'flarum/common/components/Page';
 
     return m('.OAuthConnectPanel', self.clients.map(function (client) {
       return m('.OAuthConnectApplicationItem', [
-        m('div', [m('strong', client.name), m('code.OAuthConnectClientId', client.client_id), m('span.OAuthConnectStatus', client.is_enabled ? t('enabled', {}, 'Enabled') : t('disabled', {}, 'Disabled'))]),
+        m('.OAuthConnectApplicationMain', [m('.OAuthConnectApplicationIdentity', [m('strong', client.name), m('span.OAuthConnectStatus', { className: client.is_enabled ? 'OAuthConnectStatus--enabled' : 'OAuthConnectStatus--disabled' }, client.is_enabled ? t('enabled', {}, 'Enabled') : t('disabled', {}, 'Disabled'))]), m('code.OAuthConnectClientId', client.client_id)]),
         m('.OAuthConnectActions', [
           m('button.Button', { type: 'button', onclick: function () { self.toggleClient(client); } }, client.is_enabled ? t('disable', {}, 'Disable') : t('enable', {}, 'Enable')),
           m('button.Button', { type: 'button', onclick: function () { self.resetClient(client); } }, t('reset_secret', {}, 'Reset secret')),

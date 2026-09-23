@@ -309,6 +309,222 @@
   }
 }
 
+.OAuthConnectForumPage {
+  max-width: 900px;
+
+  .OAuthConnectPageTitle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 4px 0 18px;
+    border-bottom: 1px solid var(--control-bg);
+  }
+
+  .OAuthConnectPageTitle h2,
+  .OAuthConnectPageTitle p {
+    margin: 0;
+  }
+
+  .OAuthConnectPageTitle h2 {
+    margin: 4px 0;
+  }
+
+  .OAuthConnectEyebrow {
+    color: var(--muted-color);
+    font-size: 11px;
+    font-weight: 700;
+  }
+
+  .OAuthConnectOverview {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    margin: 16px 0 22px;
+    border: 1px solid var(--control-bg);
+    border-radius: 6px;
+  }
+
+  .OAuthConnectOverviewItem {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    padding: 12px 16px;
+  }
+
+  .OAuthConnectOverviewItem + .OAuthConnectOverviewItem {
+    border-left: 1px solid var(--control-bg);
+  }
+
+  .OAuthConnectOverviewItem strong {
+    font-size: 19px;
+    line-height: 1.2;
+  }
+
+  .OAuthConnectOverviewItem span,
+  .OAuthConnectSectionHeading > span {
+    color: var(--muted-color);
+    font-size: 12px;
+  }
+
+  .OAuthConnectSection {
+    margin-top: 22px;
+  }
+
+  .OAuthConnectSectionHeading,
+  .OAuthConnectApplicationIdentity {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .OAuthConnectSectionHeading {
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--control-bg);
+  }
+
+  .OAuthConnectSectionHeading h3 {
+    margin: 0;
+    font-size: 16px;
+  }
+
+  .OAuthConnectApplicationItem {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--control-bg);
+  }
+
+  .OAuthConnectApplicationMain {
+    min-width: 0;
+    flex: 1;
+  }
+
+  .OAuthConnectApplicationIdentity {
+    justify-content: flex-start;
+  }
+
+  .OAuthConnectApplicationItem p {
+    margin: 5px 0;
+  }
+
+  .OAuthConnectApplicationMeta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 14px;
+    color: var(--muted-color);
+    font-size: 12px;
+  }
+
+  .OAuthConnectApplicationMeta a {
+    overflow-wrap: anywhere;
+  }
+
+  .OAuthConnectReviewNote {
+    padding-left: 10px;
+    border-left: 2px solid #e0a126;
+    color: var(--muted-color);
+  }
+
+  .OAuthConnectStatus {
+    padding: 3px 7px;
+    border-radius: 4px;
+    background: var(--control-bg);
+    font-size: 11px;
+    line-height: 1.2;
+  }
+
+  .OAuthConnectStatus--pending {
+    background: #fff4d6;
+    color: #805b08;
+  }
+
+  .OAuthConnectStatus--approved,
+  .OAuthConnectStatus--enabled {
+    background: #e1f4e8;
+    color: #176b3a;
+  }
+
+  .OAuthConnectStatus--rejected,
+  .OAuthConnectStatus--cancelled,
+  .OAuthConnectStatus--disabled {
+    background: #fae5e5;
+    color: #9c2f32;
+  }
+
+  .OAuthConnectStatus--withdrawn {
+    background: #e9edf0;
+    color: #53616b;
+  }
+
+  .OAuthConnectForm {
+    margin-top: 16px;
+    padding: 16px;
+    border: 1px solid var(--control-bg);
+    border-radius: 6px;
+    background: var(--body-bg);
+  }
+
+  .OAuthConnectFormHeading {
+    margin-bottom: 14px;
+  }
+
+  .OAuthConnectFormHeading h3,
+  .OAuthConnectFormHeading p {
+    margin: 0;
+  }
+
+  .OAuthConnectFormHeading p {
+    margin-top: 4px;
+  }
+
+  .OAuthConnectForm label {
+    display: block;
+    margin-top: 12px;
+  }
+
+  .OAuthConnectForm label > span {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 600;
+  }
+
+  .OAuthConnectForm textarea {
+    resize: vertical;
+  }
+
+  .OAuthConnectFormGrid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .OAuthConnectFormActions,
+  .OAuthConnectActions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .OAuthConnectFormActions {
+    justify-content: flex-end;
+    margin-top: 14px;
+  }
+
+  .OAuthConnectActions {
+    flex: 0 0 auto;
+  }
+
+  .OAuthConnectClientId {
+    display: block;
+    margin-top: 5px;
+    color: var(--muted-color);
+    overflow-wrap: anywhere;
+  }
+}
+
 @media (max-width: 760px) {
   .OAuthConnectPage {
     .OAuthConnectEndpoints,
@@ -333,6 +549,31 @@
     .OAuthConnectTable {
       display: block;
       overflow-x: auto;
+    }
+  }
+
+  .OAuthConnectForumPage {
+    .OAuthConnectPageTitle,
+    .OAuthConnectApplicationItem {
+      align-items: flex-start;
+    }
+
+    .OAuthConnectPageTitle {
+      flex-direction: column;
+    }
+
+    .OAuthConnectOverviewItem {
+      padding: 10px 8px;
+    }
+
+    .OAuthConnectFormGrid {
+      grid-template-columns: 1fr;
+      gap: 0;
+    }
+
+    .OAuthConnectApplicationItem {
+      flex-direction: column;
+      gap: 10px;
     }
   }
 }

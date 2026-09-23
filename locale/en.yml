@@ -199,6 +199,17 @@ lowseekai-oauth-connect:
     reset_secret: Reset secret
     confirm_reset_secret: Reset this secret and revoke existing tokens?
     no_applications: You have not submitted an application yet.
+    eyebrow: DEVELOPER ACCESS
+    overview:
+      applications: Applications
+      pending: Under review
+      approved: Approved
+    status:
+      pending: Under review
+      approved: Approved
+      rejected: Rejected
+      withdrawn: Withdrawn
+      cancelled: Cancelled
     loading: Loading...
     submitting: Submitting...
     submit: Submit application
@@ -213,6 +224,7 @@ lowseekai-oauth-connect:
       title: New application
       name: Application name
       description: Description
+      description_help: Add your app details and exact callback URL.
       homepage_url: Homepage URL
       application_note: Application note
       redirect_uris: Redirect URIs
