@@ -4,7 +4,6 @@ namespace Lowseekai\OAuthConnect\Support;
 
 use Flarum\Notification\NotificationSyncer;
 use Flarum\User\User;
-use Illuminate\Database\Eloquent\Builder;
 use Lowseekai\OAuthConnect\Models\Application;
 use Lowseekai\OAuthConnect\Notifications\ApplicationReviewedNotification;
 use Lowseekai\OAuthConnect\Notifications\ApplicationSubmittedNotification;
@@ -19,9 +18,10 @@ class ApplicationNotifier
     {
         $application->loadMissing('user');
         $recipients = User::query()
-            ->where('is_admin', true)
-            ->orWhereHas('groups.permissions', fn (Builder $query) => $query->where('permission', 'oauthConnect.manageApplications'))
-            ->get();
+            ->with('groups.permissions')
+            ->get()
+            ->filter(fn (User $user) => $user->isAdmin() || $user->hasPermission('oauthConnect.manageApplications'))
+            ->values();
 
         $this->notifications->sync(new ApplicationSubmittedNotification($application), $recipients->all());
     }
